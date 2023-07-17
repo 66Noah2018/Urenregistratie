@@ -57,6 +57,8 @@ public class AssignmentTest {
     private static TimeSlot testTimeSlot1;
     private static TimeSlot testTimeSlot2;
     private static TimeSlot testTimeSlot3;
+    private static LocalDateTime deadline1;
+    private static LocalDateTime deadline2;
     
     @BeforeClass
     public static void setUpClass() {
@@ -82,6 +84,8 @@ public class AssignmentTest {
         singleTimeSlot.add(testTimeSlot1);
         shorterTimeSlotList.add(testTimeSlot1);
         shorterTimeSlotList.add(testTimeSlot2);
+        deadline1 = time2;
+        deadline2 = time5;
     }
     
     @AfterClass
@@ -92,7 +96,7 @@ public class AssignmentTest {
     public void setUp() {
         testAssignment1 = new Assignment(assignmentName1, assignmentDetails1, assignmentSupervisor1, assignmentProjectId1);
         testAssignment2 = new Assignment(assignmentId2, assignmentName2, assignmentDetails2, assignmentSupervisor2, assignmentProjectId2, unorderedTimeSlotList, assignmentState2);
-        testAssignment3 = new Assignment(assignmentId3, assignmentName3, assignmentDetails3, assignmentSupervisor3, assignmentProjectId3, assignmentState3);
+        testAssignment3 = new Assignment(assignmentId3, assignmentName3, assignmentDetails3, assignmentSupervisor3, assignmentProjectId3, assignmentState3, deadline1);
     }
     
     @After
@@ -194,6 +198,14 @@ public class AssignmentTest {
     public void testGetAssignmentState3() {
         assertEquals(assignmentState3.name(), testAssignment3.getAssignmentState());
     }
+    
+    /**
+     * Test of getDeadline method, of class Assignment.
+     */
+    @Test
+    public void testGetDeadline(){
+        assertEquals(deadline1, testAssignment3.getDeadline());
+    }
 
     /**
      * Test of setAssignmentName method, of class Assignment.
@@ -293,6 +305,16 @@ public class AssignmentTest {
     public void testSetAssignmentState4() {
         testAssignment3.setAssignmentState("FINISHED");
         assertEquals(Utils.AssignmentState.FINISHED.name(), testAssignment3.getAssignmentState());
+    }
+    
+    /**
+     * Test of setDeadline method, of class Assignment.
+     */
+    
+    @Test
+    public void testSetDeadline(){
+        testAssignment3.setDeadline(deadline2);
+        assertEquals(deadline2, testAssignment3.getDeadline());
     }
 
     /**

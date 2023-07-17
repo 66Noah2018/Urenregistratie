@@ -4,6 +4,7 @@
  */
 package portfolio.urenregistratie;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,7 @@ public class Assignment {
     private String correspondingProjectId;
     private ArrayList<TimeSlot> hoursWorked;
     private Utils.AssignmentState assignmentState; // should NEVER be null!
+    private LocalDateTime deadline;
     
     public Assignment (String assignmentName, String assignmentDetails, String supervisor, String correspondingProjectId) {
         UUID newUuid = randomUUID();
@@ -41,6 +43,19 @@ public class Assignment {
         this.correspondingProjectId = correspondingProjectId;
         this.hoursWorked = new ArrayList<>();
         this.assignmentState = Utils.AssignmentState.NOT_STARTED;
+        this.deadline = null;
+    }
+    
+    public Assignment (String assignmentName, String assignmentDetails, String supervisor, String correspondingProjectId, LocalDateTime deadline) {
+        UUID newUuid = randomUUID();
+        this.assignmentId = newUuid.toString();
+        this.assignmentName = assignmentName;
+        this.assignmentDetails = assignmentDetails;
+        this.supervisor = supervisor;
+        this.correspondingProjectId = correspondingProjectId;
+        this.hoursWorked = new ArrayList<>();
+        this.assignmentState = Utils.AssignmentState.NOT_STARTED;
+        this.deadline = deadline;
     }
     
     public Assignment (String assignmentId, String assignmentName, String assignmentDetails, String supervisor, String correspondingProjectId, ArrayList<TimeSlot> hoursWorked, Utils.AssignmentState assignmentState) {
@@ -51,6 +66,18 @@ public class Assignment {
         this.correspondingProjectId = correspondingProjectId;
         this.hoursWorked = hoursWorked;
         this.assignmentState = assignmentState;
+        this.deadline = null;
+    }
+    
+    public Assignment (String assignmentId, String assignmentName, String assignmentDetails, String supervisor, String correspondingProjectId, ArrayList<TimeSlot> hoursWorked, Utils.AssignmentState assignmentState, LocalDateTime deadline) {
+        this.assignmentId = assignmentId;
+        this.assignmentName = assignmentName;
+        this.assignmentDetails = assignmentDetails;
+        this.supervisor = supervisor;
+        this.correspondingProjectId = correspondingProjectId;
+        this.hoursWorked = hoursWorked;
+        this.assignmentState = assignmentState;
+        this.deadline = deadline;
     }
     
     public Assignment (String assignmentId, String assignmentName, String assignmentDetails, String supervisor, String correspondingProjectId, Utils.AssignmentState assignmentState) {
@@ -61,6 +88,18 @@ public class Assignment {
         this.correspondingProjectId = correspondingProjectId;
         this.hoursWorked = new ArrayList<>();
         this.assignmentState = assignmentState;
+        this.deadline = null;
+    }
+    
+    public Assignment (String assignmentId, String assignmentName, String assignmentDetails, String supervisor, String correspondingProjectId, Utils.AssignmentState assignmentState, LocalDateTime deadline) {
+        this.assignmentId = assignmentId;
+        this.assignmentName = assignmentName;
+        this.assignmentDetails = assignmentDetails;
+        this.supervisor = supervisor;
+        this.correspondingProjectId = correspondingProjectId;
+        this.hoursWorked = new ArrayList<>();
+        this.assignmentState = assignmentState;
+        this.deadline = deadline;
     }
     
     public String getAssignmentId() { return this.assignmentId; }
@@ -70,6 +109,7 @@ public class Assignment {
     public String getCorrespondingProjectId() { return this.correspondingProjectId; }
     public ArrayList<TimeSlot> getHoursWorked() { return this.hoursWorked; }
     public String getAssignmentState() { return this.assignmentState.name(); }
+    public LocalDateTime getDeadline() { return this.deadline; }
     
     public void setAssignmentName (String assignmentName) { this.assignmentName = assignmentName; }
     public void setAssignmentDetails (String assignmentDetails) { this.assignmentDetails = assignmentDetails; }
@@ -94,6 +134,7 @@ public class Assignment {
                 break;
         }
     }
+    public void setDeadline (LocalDateTime deadline) { this.deadline = deadline; }
     
     public void addHoursWorked (TimeSlot newHoursWorked) { this.hoursWorked.add(newHoursWorked); }
     public void removeHoursWorked (String removedHoursWorkedId) { 
