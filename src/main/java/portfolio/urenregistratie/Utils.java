@@ -11,8 +11,7 @@ import java.util.ArrayList;
  * @author RLvan
  */
 public class Utils {
-//    public static ArrayList<Assignment> assignments = new ArrayList<>();
-//    public static ArrayList<Project> projects = new ArrayList<>(); TODO move to servlet
+    public static String sourcePath = null;
     
     enum AssignmentState {
         NOT_STARTED,
