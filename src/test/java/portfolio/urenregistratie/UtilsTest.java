@@ -28,18 +28,23 @@ public class UtilsTest {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     private static String assignmentId2;
     private static String assignmentId3;
+    private static String assignmentId4;
     private static final String assignmentName1 = "assgName1";
     private static final String assignmentName2 = "assgName2";
     private static final String assignmentName3 = "assgName3";
+    private static final String assignmentName4 = "assgName4";
     private static final String assignmentDetails1 = "Some very long string";
     private static final String assignmentDetails2 = "With a lot of details";
     private static final String assignmentDetails3 = "About a certain assignment";
+    private static final String assignmentDetails4 = "Which might have a deadline";
     private static final String assignmentSupervisor1 = "sup1";
     private static final String assignmentSupervisor2 = "sup2";
     private static final String assignmentSupervisor3 = "sup3";
+    private static final String assignmentSupervisor4 = "sup4";
     private static final String assignmentProjectId2 = "456";
     private static final Utils.AssignmentState assignmentState2 = Utils.AssignmentState.NOT_STARTED;
     private static final Utils.AssignmentState assignmentState3 = Utils.AssignmentState.INSUFFICIENT_INFORMATION;
+    private static final Utils.AssignmentState assignmentState4 = Utils.AssignmentState.FINISHED;
     private static LocalDateTime time1;
     private static LocalDateTime time2;
     private static LocalDateTime time3;
@@ -49,6 +54,7 @@ public class UtilsTest {
     private static Assignment testAssignment1;
     private static Assignment testAssignment2;
     private static Assignment testAssignment3;
+    private static Assignment testAssignment4;
     private static ArrayList<TimeSlot> unorderedTimeSlotList = new ArrayList<>();
     private static ArrayList<TimeSlot> orderedTimeSlotList = new ArrayList<>();
     private static ArrayList<TimeSlot> singleTimeSlot = new ArrayList<>();
@@ -57,6 +63,7 @@ public class UtilsTest {
     private static TimeSlot testTimeSlot2;
     private static TimeSlot testTimeSlot3;
     private static LocalDateTime deadline1;
+    private static LocalDateTime deadline2;
     private static ArrayList<Project> projects = new ArrayList<>();
     private static ArrayList<Assignment> assignments = new ArrayList<>();
     private static Project testProject1;
@@ -100,11 +107,13 @@ public class UtilsTest {
         shorterTimeSlotList.add(testTimeSlot1);
         shorterTimeSlotList.add(testTimeSlot2);
         deadline1 = time2;
+        deadline2 = time5;
         testProject1 = new Project(project1Name, project1Code, project1DisplayColor);
         testProject2 = new Project(project2Id, project2Name, project2Code, project2DisplayColor);
         testAssignment1 = new Assignment(assignmentName1, assignmentDetails1, assignmentSupervisor1, project1Code);
         testAssignment2 = new Assignment(assignmentId2, assignmentName2, assignmentDetails2, assignmentSupervisor2, assignmentProjectId2, unorderedTimeSlotList, assignmentState2);
         testAssignment3 = new Assignment(assignmentId3, assignmentName3, assignmentDetails3, assignmentSupervisor3, project2Code, assignmentState3, deadline1);
+        testAssignment4 = new Assignment(assignmentId4, assignmentName4, assignmentDetails4, assignmentSupervisor4, project2Code, assignmentState4, deadline2);
         assignments.add(testAssignment1);
         assignments.add(testAssignment2);
         assignments.add(testAssignment3);
@@ -238,4 +247,44 @@ public class UtilsTest {
         assertArrayEquals(supervisors.toArray(), Utils.getSupervisors(assignments).toArray());
     }
     
+    /**
+     * Test of sortAssignmentsByDeadline method, of class Utils.
+     */
+    @Test
+    public void testSortAssignmentsByDeadline(){
+        ArrayList<Assignment> sortedAssignments = new ArrayList<>();
+        ArrayList<Assignment> unsortedAssignments = new ArrayList<>();
+        unsortedAssignments.addAll(assignments);
+        unsortedAssignments.add(testAssignment4);
+        sortedAssignments.add(testAssignment4);
+        sortedAssignments.add(testAssignment3);
+        sortedAssignments.add(testAssignment1);
+        sortedAssignments.add(testAssignment2);
+        assertArrayEquals(sortedAssignments.toArray(), Utils.sortAssignmentsByDeadline(unsortedAssignments).toArray());
+    }
+    
+    /**
+     * Test of getAssignmentsWithoutDeadline method, of class Utils
+     */    
+    @Test
+    public void testGetAssignmentsWithoutDeadline(){
+        ArrayList<Assignment> expectedResult = new ArrayList<>();
+        expectedResult.add(testAssignment1);
+        expectedResult.add(testAssignment2);
+        assertArrayEquals(expectedResult.toArray(), Utils.getAssignmentsWithoutDeadline(assignments).toArray());
+    }
+    
+    /**
+     * Test of getAssignmentsWithDeadline method, of class Utils
+     */
+    @Test
+    public void testGetAssignmentsWithDeadline(){
+        ArrayList<Assignment> sortedAssignments = new ArrayList<>();
+        ArrayList<Assignment> unsortedAssignments = new ArrayList<>();
+        unsortedAssignments.addAll(assignments);
+        unsortedAssignments.add(testAssignment4);
+        sortedAssignments.add(testAssignment4);
+        sortedAssignments.add(testAssignment3);
+        assertArrayEquals(sortedAssignments.toArray(), Utils.getAssignmentsWithDeadline(unsortedAssignments).toArray());
+    }
 }

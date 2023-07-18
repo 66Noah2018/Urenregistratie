@@ -5,11 +5,20 @@
 package portfolio.urenregistratie;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
  * @author RLvan
  */
+class SortByDeadline implements Comparator<Assignment>{
+    @Override
+    public int compare(Assignment a, Assignment b){
+        return a.getDeadline().compareTo(b.getDeadline());
+    }
+}
+
 public class Utils {
     public static String sourcePath = null;
     
@@ -75,5 +84,37 @@ public class Utils {
             if (!supervisors.contains(assignment.getSupervisor())) { supervisors.add(assignment.getSupervisor()); }
         }
         return supervisors;
+    }
+    
+    public static ArrayList<Assignment> sortAssignmentsByDeadline(ArrayList<Assignment> assignments){
+        ArrayList<Assignment> sortedAssignments = new ArrayList<>();
+        ArrayList<Assignment> assignmentsWithDeadline = new ArrayList<>();
+        ArrayList<Assignment> assignmentsWithoutDeadline = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            if (assignment.getDeadline() != null) { assignmentsWithDeadline.add(assignment); } 
+            else { assignmentsWithoutDeadline.add(assignment); }
+        }
+        
+        sortedAssignments.addAll(assignmentsWithDeadline);
+        Collections.sort(sortedAssignments, new SortByDeadline());
+        sortedAssignments.addAll(assignmentsWithoutDeadline);
+        return sortedAssignments;
+    }
+    
+    public static ArrayList<Assignment> getAssignmentsWithoutDeadline(ArrayList<Assignment> assignments){
+        ArrayList<Assignment> assignmentsWithoutDeadline = new ArrayList<>();
+        for (Assignment assignment : assignments){
+            if (assignment.getDeadline() == null) { assignmentsWithoutDeadline.add(assignment); }
+        }
+        return assignmentsWithoutDeadline;
+    }
+    
+    public static ArrayList<Assignment> getAssignmentsWithDeadline(ArrayList<Assignment> assignments){
+        ArrayList<Assignment> assignmentsWithDeadline = new ArrayList<>();
+        for (Assignment assignment : assignments){
+            if (assignment.getDeadline() != null) { assignmentsWithDeadline.add(assignment); }
+        }
+        Collections.sort(assignmentsWithDeadline, new SortByDeadline());
+        return assignmentsWithDeadline;
     }
 }
