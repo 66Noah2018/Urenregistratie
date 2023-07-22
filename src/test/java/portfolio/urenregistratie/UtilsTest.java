@@ -7,8 +7,11 @@ package portfolio.urenregistratie;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import static java.util.UUID.randomUUID;
+import static org.assertj.core.api.Assertions.entry;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -286,5 +289,34 @@ public class UtilsTest {
         sortedAssignments.add(testAssignment4);
         sortedAssignments.add(testAssignment3);
         assertArrayEquals(sortedAssignments.toArray(), Utils.getAssignmentsWithDeadline(unsortedAssignments).toArray());
+    }
+    
+    /**
+     * Test of getHoursGroupedByProject method, of class Utils
+     */
+    @Test
+    public void testGetHoursGroupedByProject(){
+        HashMap<String, ArrayList<TimeSlot>> groupedHours = Utils.getHoursGroupedByProject(assignments);
+        final SoftAssertions soft = new SoftAssertions();
+        soft.assertThat(groupedHours.get(project1Code)).isEmpty();
+        soft.assertThat(groupedHours.get(project2Code)).isEmpty();
+        soft.assertThat(groupedHours).contains(entry(assignmentProjectId2, unorderedTimeSlotList));
+        soft.assertAll();
+    }
+    
+    /**
+     * Test of getUnwrittenHoursGroupedByProject method, of class Utils
+     */
+    @Test
+    public void testGetUnwrittenHoursGroupedByProject(){
+        HashMap<String, ArrayList<TimeSlot>> groupedHours = Utils.getUnwrittenHoursGroupedByProject(assignments);
+        ArrayList<TimeSlot> unwrittenAssignmentProjectId2 = new ArrayList<>();
+        unwrittenAssignmentProjectId2.add(testTimeSlot1);
+        unwrittenAssignmentProjectId2.add(testTimeSlot2);
+        final SoftAssertions soft = new SoftAssertions();
+        soft.assertThat(groupedHours.get(project1Code)).isEmpty();
+        soft.assertThat(groupedHours.get(project2Code)).isEmpty();
+        soft.assertThat(groupedHours).contains(entry(assignmentProjectId2, unwrittenAssignmentProjectId2));
+        soft.assertAll();
     }
 }

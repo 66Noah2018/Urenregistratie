@@ -145,6 +145,15 @@ public class Assignment {
             }
         }
     }
+    /** UNTESTED **/
+    public void updateHoursWorked(TimeSlot updatedHoursWorked){
+        for (int i = 0; i < this.hoursWorked.size(); i++){
+            if (this.hoursWorked.get(i).getTimeSlotId().equals(updatedHoursWorked.getTimeSlotId())) {
+                this.hoursWorked.set(i, updatedHoursWorked);
+                return;
+            }
+        }
+    }
 
     public void sortTimeSlots() {
         Collections.sort(this.hoursWorked, new SortByStartTime());

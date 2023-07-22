@@ -7,6 +7,7 @@ package portfolio.urenregistratie;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  *
@@ -41,6 +42,20 @@ public class Utils {
         return hoursWritten;
     }
     
+    public static HashMap<String, ArrayList<TimeSlot>> getHoursGroupedByProject(ArrayList<Assignment> assignments){
+        HashMap<String, ArrayList<TimeSlot>> groupedHours = new HashMap<>();
+        ArrayList<String> projectIds = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            if (!projectIds.contains(assignment.getCorrespondingProjectId())) { projectIds.add(assignment.getCorrespondingProjectId()); }
+        }
+        
+        for (String projectId : projectIds){
+            ArrayList<TimeSlot> hoursForProject = getHoursByProjectId(assignments, projectId);
+            groupedHours.put(projectId, hoursForProject);
+        }
+        return groupedHours;
+    }
+    
     public static ArrayList<TimeSlot> getUnwrittenHoursByProjectId(ArrayList<Assignment> assignments, String projectId){
         ArrayList<TimeSlot> hoursWritten = new ArrayList<>();
         for (int i = 0; i < assignments.size(); i++){
@@ -52,6 +67,20 @@ public class Utils {
             }
         }
         return hoursWritten;
+    }
+    
+    public static HashMap<String, ArrayList<TimeSlot>> getUnwrittenHoursGroupedByProject(ArrayList<Assignment> assignments){
+        HashMap<String, ArrayList<TimeSlot>> groupedHours = new HashMap<>();
+        ArrayList<String> projectIds = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            if (!projectIds.contains(assignment.getCorrespondingProjectId())) { projectIds.add(assignment.getCorrespondingProjectId()); }
+        }
+        
+        for (String projectId : projectIds){
+            ArrayList<TimeSlot> hoursForProject = getUnwrittenHoursByProjectId(assignments, projectId);
+            groupedHours.put(projectId, hoursForProject);
+        }
+        return groupedHours;
     }
 
     public static ArrayList<Assignment> getAssignmentsByState(ArrayList<Assignment> assignments, ArrayList<String> states){ // use strings to avoid extra conversions
