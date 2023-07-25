@@ -15,7 +15,7 @@ import org.javatuples.Pair;
  *
  * @author RLvan
  */
-public class servletSetterDecoder {
+public class ServletSetterDecoder {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     
     public static Pair<String, TimeSlot> decodeNewTimeSlot (String encodedTimeSlot) throws JsonProcessingException {

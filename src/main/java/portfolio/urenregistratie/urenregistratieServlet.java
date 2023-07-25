@@ -4,8 +4,9 @@
  */
 package portfolio.urenregistratie;
 
+import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 /**
  *
@@ -145,7 +147,43 @@ public class urenregistratieServlet extends HttpServlet {
                 response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             // file related requests
-            
+            case "newRegistration":
+                processNewRegistration(request);
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                break;
+            case "editRegistrationDetails":
+                processRegistrationDetailChange(request);
+                break;
+            case "openRegistration":
+                String registrationData = openRegistration(request);
+                break;
+            case "saveRegistration":
+                saveRegistration();
+                break;
+            case "getDefaultWorkingDirectory":
+                if (ServletUtils.defaultWorkingDirectory == null) { ServletUtils.loadSettings(); }
+                response.getWriter().write("{\"defaultWorkingDirectory\":\"" + ServletUtils.defaultWorkingDirectory.replace("\\", "\\\\") + "\"}");
+                break;
+            case "setDefaultWorkingDirectory":
+                processChangedDefaultWorkingDirectory(request);
+                break;
+            case "getSettings":
+                String settings = getSettings();
+                response.getWriter().write(settings);
+                break;
+            case "getRegistrationProperties":
+                String properties = ServletUtils.readProjectFromFile();
+                response.getWriter().write(properties);
+                break;
+            case "directoryExists":
+                Boolean exists = ServletUtils.directoryExists(request);
+                response.getWriter().write("{\"directoryExists\":" + exists + "}");
+                break;
+            case "getPrevOpened":
+                ServletUtils.loadSettings();
+                String prevOpenedString = ServletUtils.prevOpened.toString();
+                response.getWriter().write(prevOpenedString);
+                break;
             default:
                 break;
         }
@@ -174,7 +212,7 @@ private String getUnwrittenHoursGrouped(){
 
 private void addTimeSlot (HttpServletRequest request) throws IOException{
     String requestBody = ServletUtils.getBody(request);
-    Pair<String,TimeSlot> newTimeSlotInfo = servletSetterDecoder.decodeNewTimeSlot(requestBody);
+    Pair<String,TimeSlot> newTimeSlotInfo = ServletSetterDecoder.decodeNewTimeSlot(requestBody);
     String assignmentId = newTimeSlotInfo.getValue0();
     TimeSlot newTimeSlot = newTimeSlotInfo.getValue1();
     if (newTimeSlot != null) {
@@ -191,7 +229,7 @@ private void addTimeSlot (HttpServletRequest request) throws IOException{
 
 private void updateTimeSlot (HttpServletRequest request) throws IOException{
     String requestBody = ServletUtils.getBody(request);
-    Pair<String,TimeSlot> updatedTimeSlotInfo = servletSetterDecoder.decodeUpdatedTimeSlot(requestBody);
+    Pair<String,TimeSlot> updatedTimeSlotInfo = ServletSetterDecoder.decodeUpdatedTimeSlot(requestBody);
     String assignmentId = updatedTimeSlotInfo.getValue0();
     TimeSlot updatedTimeSlot = updatedTimeSlotInfo.getValue1();
 
@@ -222,7 +260,7 @@ private void deleteTimeSlot (HttpServletRequest request){
 
 private void addAssignment (HttpServletRequest request) throws IOException{
     String requestBody = ServletUtils.getBody(request);
-    Assignment newAssignment = servletSetterDecoder.decodeNewAssignment(requestBody);
+    Assignment newAssignment = ServletSetterDecoder.decodeNewAssignment(requestBody);
     if (newAssignment != null) { assignments.add(newAssignment); }
 }
 
@@ -249,7 +287,7 @@ private void deleteAssignment (HttpServletRequest request){
 
 private void addProject (HttpServletRequest request) throws IOException{
     String requestBody = ServletUtils.getBody(request);
-    Project newProject = servletSetterDecoder.decodeNewProject(requestBody);
+    Project newProject = ServletSetterDecoder.decodeNewProject(requestBody);
     if (newProject != null) { projects.add(newProject); }
 }
 
@@ -280,7 +318,74 @@ private void deleteProject (HttpServletRequest request){
             return;
         }
     }
-    // loop through assignments, set to null if corresponding project is the project for which a removal request was received
+}
+
+private void processNewRegistration(HttpServletRequest request) throws IOException {
+    String requestBody = ServletUtils.getBody(request);
+    requestBody = requestBody.substring(1, requestBody.length() - 1);
+    Pattern newRegistrationPattern = Pattern.compile("\"registrationName\":\"(.*)\",\"workingDir\":\"(.*)\"");
+    Matcher newRegistrationMatcher = newRegistrationPattern.matcher(requestBody);
+    Boolean newRegistrationMatchFound = newRegistrationMatcher.find();
+    if (newRegistrationMatchFound){
+        projects = new ArrayList<Project>();
+        assignments = new ArrayList<Assignment>();
+        ServletUtils.registrationName = newRegistrationMatcher.group(1);
+        String workingDirStr = newRegistrationMatcher.group(2);
+        ServletUtils.workingDir = Paths.get(workingDirStr);
+        
+        String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + workingDirStr.replace("\\", "\\\\") + "\",\"projects\":[],\"assignments\":[]}";
+
+        String fileLocation = ServletUtils.workingDir + "\\" + ServletUtils.registrationName + ".json";
+
+        FileWriter file = new FileWriter(fileLocation);
+        file.write(body);
+        file.close();
+    } 
+}
+
+private void processRegistrationDetailChange(HttpServletRequest request) throws IOException {
+    String requestBody = ServletUtils.getBody(request);
+    requestBody = requestBody.substring(1, requestBody.length() - 1);
+    Pattern detailChangePattern = Pattern.compile("\"registrationName\":\"(.*)\",\"workingDir\":\"(.*)\"");
+    Matcher detailChangeMatcher = detailChangePattern.matcher(requestBody);
+    Boolean detailChangeMatchFound = detailChangeMatcher.find();
+    if (detailChangeMatchFound){
+        ServletUtils.registrationName = detailChangeMatcher.group(1);
+        ServletUtils.workingDir = Paths.get(detailChangeMatcher.group(2));
+    }
+}
+
+private String openRegistration(HttpServletRequest request) throws IOException {
+    Triplet<String, String, String> result = ServletUtils.openProject(request);
+    if (result.getValue2().equals("File opened successfully")) {
+        projects = JSONDecoder.decodeProjects(result.getValue1());
+        assignments = JSONDecoder.decodeAssignments(result.getValue0());
+    } 
+    return result.getValue2();
+}
+
+private void saveRegistration() throws IOException {
+    String encodedProjects = JSONEncoder.encodeProjects(projects);
+    String encodedAssignments = JSONEncoder.encodeAssignments(assignments);
+    
+    String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + ServletUtils.workingDir.toString().replace("\\", "\\\\") + "\",\"projects\":" + encodedProjects + ",\"assignments\":" + encodedAssignments + "}";
+
+    String fileLocation = ServletUtils.workingDir + "\\" + ServletUtils.registrationName + ".json";
+
+    FileWriter file = new FileWriter(fileLocation);
+    file.write(body);
+    file.close();
+}
+
+private String getSettings() throws IOException {
+    if (ServletUtils.settings == null) { ServletUtils.loadSettings(); }
+    return ServletUtils.settings;
+}
+
+private void processChangedDefaultWorkingDirectory(HttpServletRequest request) throws IOException {
+    String folder = ServletUtils.getBody(request).replace("\"", "");
+    ServletUtils.defaultWorkingDirectory = folder;
+    ServletUtils.writeSettings();
 }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -323,5 +428,4 @@ private void deleteProject (HttpServletRequest request){
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }
