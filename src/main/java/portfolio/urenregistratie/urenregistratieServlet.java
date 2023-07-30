@@ -29,6 +29,7 @@ public class urenregistratieServlet extends HttpServlet {
     public static ArrayList<Project> projects = new ArrayList<>();
     private ArrayList<Assignment> requestedAssignments = null;
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -48,12 +49,12 @@ public class urenregistratieServlet extends HttpServlet {
         if (Utils.sourcePath == null) {
             ServletContext context = getServletContext();
             String realContext = context.getRealPath(context.getContextPath());
-            Utils.sourcePath = realContext.split("\\\\target")[0];
+            if (realContext != null) { Utils.sourcePath = realContext.split("\\\\target")[0]; }
         }
         switch(request.getParameter("function")){
             // getters
             case "getState": // return project and sorted (by deadline) assignments
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "getProjectById":
                 Project requestedProject = Utils.getProjectById(projects, request.getParameter("projectId"));
@@ -112,44 +113,44 @@ public class urenregistratieServlet extends HttpServlet {
             // setters
             case "addTimeSlot":
                 addTimeSlot(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "updateTimeSlot":
                 updateTimeSlot(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "deleteTimeSlot":
                 deleteTimeSlot(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "addAssignment":
                 addAssignment(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "updateAssignment":
                 updateAssignment(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "deleteAssignment":
                 deleteAssignment(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "addProject":
                 addProject(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "updateProject":
                 updateProject(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "deleteProject":
                 deleteProject(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             // file related requests
             case "newRegistration":
                 processNewRegistration(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\"" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "editRegistrationDetails":
                 processRegistrationDetailChange(request);

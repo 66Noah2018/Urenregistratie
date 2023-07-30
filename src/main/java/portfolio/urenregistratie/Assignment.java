@@ -145,7 +145,6 @@ public class Assignment {
             }
         }
     }
-    /** UNTESTED **/
     public void updateHoursWorked(TimeSlot updatedHoursWorked){
         for (int i = 0; i < this.hoursWorked.size(); i++){
             if (this.hoursWorked.get(i).getTimeSlotId().equals(updatedHoursWorked.getTimeSlotId())) {

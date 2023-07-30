@@ -1,10 +1,86 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <head>
+        <title>Urenregistatie</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- metro 4 -->
+        <link rel="stylesheet" href="https://cdn.korzh.com/metroui/v4.5.1/css/metro-all.min.css">
+        <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+        <!-- fontawesome v5 -->
+        <script src="https://kit.fontawesome.com/e64cafaf4a.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="./styles.css">
+        <script src="js/project.js"></script>
+        <script src="js/assignment.js"></script>
+        <script src="js/view.js"></script>
+        <script src="js/file.js"></script>
+        <!-- bootstrap icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     </head>
-    <body>
-        <h1>Hello World!</h1>
+    <body onload="loadData()" id="index-body">
+        <nav data-role="ribbonmenu">
+            <ul class="tabs-holder">
+                <li class="static" id="sidebar-toggle"><a>File</a></li>
+                <li><a href="#section-model">Main</a></li>
+            </ul>
+
+            <div class="content-holder">
+                <div class="section" id="section-model">
+                    <div class="group">
+                            <button class="ribbon-button" id="new-assignment" onclick="createNewAssignment()">
+                                <span class="icon">
+                                    <span class="mif-assignment"></span>
+                                </span>
+                                <span class="caption">New assignment</span>
+                            </button>
+                            <button class="ribbon-button" id="new-project" onclick="createNewProject()">
+                                <span class="icon">
+                                    <span class="bi bi-card-list"></span>
+                                </span>
+                                <span class="caption">New project</span>
+                            </button>
+                        <span class="title">New</span>
+                    </div>
+                    <div class="group">
+                        <div data-role="button-group" data-cls-active="active">
+                            <button class="ribbon-button" id="assignment-view" onclick="showAssignmentView()">
+                                <span class="icon">
+                                    <span class="bi bi-view-list"></span>
+                                </span>
+                                <span class="caption">View all assignments</span>
+                            </button>
+                            <button class="ribbon-button" id="project-view" onclick="showProjectView">
+                                <span class="icon">
+                                    <span class="bi bi-view-stacked"></span>
+                                </span>
+                                <span class="caption">View all projects</span>
+                            </button>
+                            <button class="ribbon-button" id="supervisor-view" onclick="showSupervisorView">
+                                <span class="icon">
+                                    <span class="fas fa-user"></span>
+                                </span>
+                                <span class="caption">View all supervisors</span>
+                            </button>
+                        </div>
+                        <span class="title">View</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <aside class="sidebar" id="sidebar-index" data-role="sidebar" data-toggle="#sidebar-toggle">
+            <ul class="sidebar-menu">
+                <li class="group-title">New</li>
+                <li><a href="./html/create-registration.html"><span class="mif-file-empty icon"></span>New Registration</a></li>
+                <li><a href="./html/open-registration.html"><span class="mif-folder-open icon"></span>Open Registration</a></li>
+                <li class="group-title">Registration Options</li>
+                <li><a href="#" onclick="saveRegistration()"><span class="mif-floppy-disk icon"></span>Save Registration</a></li>
+                <li><a href="./html/registration-properties.html"><span class="mif-description icon"></span>Edit Registration Properties</a></li>
+                <li class="group-title">Settings</li>
+                <li><a href="./html/preferences.html"><span class="mif-cogs icon"></span>Preferences</a></li>
+            </ul>
+        </aside>
+        <div id="content"></div>
     </body>
 </html>

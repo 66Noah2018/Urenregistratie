@@ -25,7 +25,7 @@ public class ServletSetterDecoder {
         if (timeSlotMatchFound){
             String assignmentId = timeSlotMatcher.group(1);
             LocalDateTime startTime = LocalDateTime.parse(timeSlotMatcher.group(2), formatter);
-            LocalDateTime endTime = LocalDateTime.parse(timeSlotMatcher.group(3), formatter);
+            LocalDateTime endTime = (timeSlotMatcher.group(3).equals("null")) ? null : LocalDateTime.parse(timeSlotMatcher.group(3), formatter);
             TimeSlot newTimeSlot = new TimeSlot(startTime, endTime);
             return new Pair<>(assignmentId, newTimeSlot);
         }

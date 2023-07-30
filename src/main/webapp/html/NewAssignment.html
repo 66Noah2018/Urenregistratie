@@ -1,0 +1,37 @@
+ <button class="image-button form-save-button" id="save-new-assignment" onclick="saveNewAssignment()">
+    <span class="mif-floppy-disk icon"></span>
+    <span class="caption">Save changes</span>
+</button>
+<h2 class="form-title">New assignment</h2>
+<div id="new-assignment-form">
+    <div>
+        <p class="form-header">Assignment name</p>
+        <input type="text" data-role="input" class="metro-input" name="assignmentName" id="assignment-name">
+    </div>
+    <div class="form-group error" id="assignment-name-group"></div>
+    <br>
+    <div>
+        <p class="form-header">Assignment details</p>
+        <textarea data-role="textarea" class="metro-input" name="assignmentDetails" id="assignment-details"></textarea>
+    </div>
+    <div class="form-group error" id="assignment-details-group"></div>
+    <br>
+    <div>
+        <p class="form-header">Supervisor</p>
+        <input type="text" data-role="input" class="metro-input" name="assignmentSupervisor" id="assignment-supervisor">
+    </div>
+    <div class="form-group error" id="assignment-supervisor-group"></div>
+    <br>
+    <div>
+        <p class="form-header">Corresponding project</p>
+        <div id="corresponding-project-select"></div>
+    </div>
+    <div class="form-group error" id="assignment-corresponding-project-group"></div>
+    <br>
+    <div>
+        <p class="form-header">Deadline</p>
+        <input type="text" data-role="calendarpicker" data-input-format="DD-MM-YYYY" data-format="DD-MM-YYYY" id="assignment-deadline">
+    </div>
+    <div class="form-group error" id="assignment-deadline-group"></div>
+</div>
+

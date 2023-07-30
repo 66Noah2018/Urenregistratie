@@ -1,0 +1,80 @@
+<button class="image-button form-save-button" id="save-updated-assignment" onclick="saveUpdatedAssignment()">
+    <span class="mif-floppy-disk icon"></span>
+    <span class="caption">Save changes</span>
+</button>
+<button class="image-button form-save-button" id="delete-assignment" onclick="deleteAssignment()">
+    <span class="mif-bin icon"></span>
+    <span class="caption">Delete assignment</span>
+</button>
+<h2 class="form-title">Assignment details</h2>
+<div>
+    <div id="assignment-details-form">
+        <div id="assignment-id-hidden"></div>
+        <div>
+            <p class="form-header">Assignment name</p>
+            <input type="text" data-role="input" class="metro-input" name="assignmentName" id="assignment-name">
+        </div>
+        <div class="form-group error" id="assignment-name-group"></div>
+        <br>
+        <div>
+            <p class="form-header">Assignment details</p>
+            <textarea data-role="textarea" class="metro-input" name="assignmentDetails" id="assignment-details"></textarea>
+        </div>
+        <div class="form-group error" id="assignment-details-group"></div>
+        <br>
+        <div>
+            <p class="form-header">Supervisor</p>
+            <input type="text" data-role="input" class="metro-input" name="assignmentSupervisor" id="assignment-supervisor">
+        </div>
+        <div class="form-group error" id="assignment-supervisor-group"></div>
+        <br>
+        <div>
+            <p class="form-header">Corresponding project</p>
+            <div id="corresponding-project-select"></div>
+        </div>
+        <div class="form-group error" id="assignment-corresponding-project-group"></div>
+        <br>
+        <div>
+            <p class="form-header">Deadline</p>
+            <input type="text" data-role="calendarpicker" data-input-format="DD-MM-YYYY" data-format="DD-MM-YYYY" id="assignment-deadline">
+        </div>
+        <div class="form-group error" id="assignment-deadline-group"></div>
+        <br>
+        <div>
+            <div class="form-header">Assignment state</div>
+            <select data-role="select" id="assignment-state-selectbox">
+                <option value="NOT_STARTED">Not started</option>
+                <option value="STARTED">Started</option>
+                <option value="INSUFFICIENT_INFORMATION">Insufficient information</option>
+                <option value="FINISHED">Finished</option>
+            </select>
+        </div>
+        <br>
+    </div>
+    <div id="assignment-details-hours-worked">
+        <p class="form-header">Hours worked</p>
+        <div class="hours-worked-buttons">
+            <button class="image-button" id="add-timeslot" onclick="addTimeslot()">
+                <span class="mif-add icon"></span>
+                <span class="caption">Add timeslot</span>
+            </button>
+            <button class="image-button" id="new-timeslot" onclick="newTimeslot()">
+                <span class="fas fa-stopwatch icon"></span>
+                <span class="caption">Start new timeslot</span>
+            </button>
+        </div>
+        <table class="table .row-hover" id="hours-worked-table">
+            <thead>
+                <tr>
+                    <th>Actions</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Hours written</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+

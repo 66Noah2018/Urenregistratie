@@ -76,12 +76,14 @@ public class JSONEncoder {
     }
     
     public static String encodeTimeSlot(TimeSlot timeSlot) { 
+        String endTime = "null";
+        if (timeSlot.getEndTime() != null) { endTime = timeSlot.getEndTime().format(formatter); }
         String result = "{\"timeSlotId\":\""
                 + timeSlot.getTimeSlotId()
                 + "\",\"startTime\":\""
                 + timeSlot.getStartTime().format(formatter)
                 + "\",\"endTime\":\""
-                + timeSlot.getEndTime().format(formatter)
+                + endTime
                 + "\",\"hoursWritten\":\""
                 + timeSlot.getHoursWritten().toString()
                 + "\"}";
