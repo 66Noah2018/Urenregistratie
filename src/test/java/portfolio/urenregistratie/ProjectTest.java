@@ -26,10 +26,8 @@ public class ProjectTest {
     private static String project2Id;
     private static final String project1Name = "CAPABLE";
     private static final String project1Code = "C1234";
-    private static final String project1DisplayColor = "red";
     private static final String project2Name = "testP";
     private static final String project2Code = "test5678";
-    private static final String project2DisplayColor = "blue";
     
     @BeforeClass
     public static void setUpClass() {
@@ -43,8 +41,8 @@ public class ProjectTest {
     
     @Before
     public void setUp() {
-        testProject1 = new Project(project1Name, project1Code, project1DisplayColor);
-        testProject2 = new Project(project2Id, project2Name, project2Code, project2DisplayColor);
+        testProject1 = new Project(project1Name, project1Code);
+        testProject2 = new Project(project2Id, project2Name, project2Code);
     }
     
     @After
@@ -84,18 +82,6 @@ public class ProjectTest {
     }
 
     /**
-     * Test of getProjectDisplayColor method, of class Project.
-     */
-    @Test
-    public void testGetProjectDisplayColor1() {
-        assertEquals(project1DisplayColor, testProject1.getProjectDisplayColor());
-    }
-    @Test
-    public void testGetProjectDisplayColor2() {
-        assertEquals(project2DisplayColor, testProject2.getProjectDisplayColor());
-    }
-
-    /**
      * Test of setProjectName method, of class Project.
      */
     @Test
@@ -125,22 +111,5 @@ public class ProjectTest {
         String altCode2 = "0987654321";
         testProject2.setProjectCode(altCode2);
         assertEquals(altCode2, testProject2.getProjectCode());
-    }
-
-    /**
-     * Test of setProjectDisplayColor method, of class Project.
-     */
-    @Test
-    public void testSetProjectDisplayColor1() {
-        String altColor1 = "yellow";
-        testProject1.setProjectDisplayColor(altColor1);
-        assertEquals(altColor1, testProject1.getProjectDisplayColor());
-    }
-    @Test
-    public void testSetProjectDisplayColor() {
-        String altColor2 = "green";
-        testProject2.setProjectDisplayColor(altColor2);
-        assertEquals(altColor2, testProject2.getProjectDisplayColor());
-    }
-    
+    }    
 }

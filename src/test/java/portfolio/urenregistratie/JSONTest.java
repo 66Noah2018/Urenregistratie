@@ -32,10 +32,8 @@ public class JSONTest {
     private static String project2Id;
     private static final String project1Name = "CAPABLE";
     private static final String project1Code = "C1234";
-    private static final String project1DisplayColor = "red";
     private static final String project2Name = "testP";
     private static final String project2Code = "test5678";
-    private static final String project2DisplayColor = "blue";
     
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     private static String assignmentId2;
@@ -80,8 +78,8 @@ public class JSONTest {
         project1Id = newUuid.toString();
         UUID newUuid2 = randomUUID();
         project2Id = newUuid2.toString();
-        testProject1 = new Project(project1Id, project1Name, project1Code, project1DisplayColor);
-        testProject2 = new Project(project2Id, project2Name, project2Code, project2DisplayColor);
+        testProject1 = new Project(project1Id, project1Name, project1Code);
+        testProject2 = new Project(project2Id, project2Name, project2Code);
         projects.add(testProject1);
         projects.add(testProject2);
         

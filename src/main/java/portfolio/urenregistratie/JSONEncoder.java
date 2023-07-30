@@ -57,8 +57,6 @@ public class JSONEncoder {
                 + project.getProjectName()
                 + "\",\"projectCode\":\""
                 + project.getProjectCode()
-                + "\",\"projectDisplayColor\":\""
-                + project.getProjectDisplayColor()
                 + "\"}";
         return result; 
     }

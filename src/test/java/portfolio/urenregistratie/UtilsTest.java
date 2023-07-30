@@ -74,10 +74,8 @@ public class UtilsTest {
     private static String project2Id;
     private static final String project1Name = "CAPABLE";
     private static final String project1Code = "C1234";
-    private static final String project1DisplayColor = "red";
     private static final String project2Name = "testP";
     private static final String project2Code = "test5678";
-    private static final String project2DisplayColor = "blue";
     private static ArrayList<String> supervisors = new ArrayList<>();
     private static String timeSlotId;
     
@@ -111,8 +109,8 @@ public class UtilsTest {
         shorterTimeSlotList.add(testTimeSlot2);
         deadline1 = time2;
         deadline2 = time5;
-        testProject1 = new Project(project1Name, project1Code, project1DisplayColor);
-        testProject2 = new Project(project2Id, project2Name, project2Code, project2DisplayColor);
+        testProject1 = new Project(project1Name, project1Code);
+        testProject2 = new Project(project2Id, project2Name, project2Code);
         testAssignment1 = new Assignment(assignmentName1, assignmentDetails1, assignmentSupervisor1, project1Code);
         testAssignment2 = new Assignment(assignmentId2, assignmentName2, assignmentDetails2, assignmentSupervisor2, assignmentProjectId2, unorderedTimeSlotList, assignmentState2);
         testAssignment3 = new Assignment(assignmentId3, assignmentName3, assignmentDetails3, assignmentSupervisor3, project2Code, assignmentState3, deadline1);

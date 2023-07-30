@@ -31,7 +31,6 @@ public class ServletSetterDecoderTest {
     private static final Boolean hoursWritten1 = true;
     private static final String testProjectName1 = "project1";
     private static final String testProjectCode1 = "code1";
-    private static final String testProjectDisplayColor1 = "red";
     private static final String testAssignmentName1 = "assignment1";
     private static final String testAssignmentDetails1 = "lorem ipsum";
     private static final String testAssignmentSupervisor1 = "sup1";
@@ -98,12 +97,11 @@ public class ServletSetterDecoderTest {
      */
     @Test
     public void testDecodeNewProject() throws Exception {
-        String encodedNewProject = "{\"projectName\":\"" + testProjectName1 + "\",\"projectCode\":\"" + testProjectCode1 + "\",\"projectDisplayColor\":\"" + testProjectDisplayColor1 + "\"}";
+        String encodedNewProject = "{\"projectName\":\"" + testProjectName1 + "\",\"projectCode\":\"" + testProjectCode1 + "\"}";
         Project decodedProject = ServletSetterDecoder.decodeNewProject(encodedNewProject);
         final SoftAssertions soft = new SoftAssertions();
         soft.assertThat(decodedProject.getProjectName()).isEqualTo(testProjectName1);
         soft.assertThat(decodedProject.getProjectCode()).isEqualTo(testProjectCode1);
-        soft.assertThat(decodedProject.getProjectDisplayColor()).isEqualTo(testProjectDisplayColor1);
         soft.assertAll();
     }
 

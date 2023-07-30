@@ -49,14 +49,13 @@ public class ServletSetterDecoder {
     }
     
     public static Project decodeNewProject (String encodedProject) throws JsonProcessingException {
-        Pattern projectPattern = Pattern.compile("\"projectName\":\"(.*)\",\"projectCode\":\"(.*)\",\"projectDisplayColor\":\"(.*)\"");
+        Pattern projectPattern = Pattern.compile("\"projectName\":\"(.*)\",\"projectCode\":\"(.*)\"");
         Matcher projectMatcher = projectPattern.matcher(encodedProject);
         Boolean projectMatchFound = projectMatcher.find();
         if (projectMatchFound){
             String projectName = projectMatcher.group(1);
             String projectCode = projectMatcher.group(2);
-            String projectDisplayColor = projectMatcher.group(3);
-            return new Project(projectName, projectCode, projectDisplayColor);
+            return new Project(projectName, projectCode);
         }
         return null;
     }

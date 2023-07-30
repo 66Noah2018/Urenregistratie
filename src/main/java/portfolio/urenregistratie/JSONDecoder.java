@@ -72,15 +72,14 @@ public class JSONDecoder {
     }
     
     public static Project decodeProject (String encodedProject) throws JsonProcessingException {
-        Pattern projectPattern = Pattern.compile("\"projectId\":\"(.*)\",\"projectName\":\"(.*)\",\"projectCode\":\"(.*)\",\"projectDisplayColor\":\"(.*)\"");
+        Pattern projectPattern = Pattern.compile("\"projectId\":\"(.*)\",\"projectName\":\"(.*)\",\"projectCode\":\"(.*)\"");
         Matcher projectMatcher = projectPattern.matcher(encodedProject);
         Boolean projectMatchFound = projectMatcher.find();
         if (projectMatchFound){
             String projectId = projectMatcher.group(1);
             String projectName = projectMatcher.group(2);
             String projectCode = projectMatcher.group(3);
-            String projectDisplayColor = projectMatcher.group(4);
-            return new Project(projectId, projectName, projectCode, projectDisplayColor);
+            return new Project(projectId, projectName, projectCode);
         }
         return null;
     }
