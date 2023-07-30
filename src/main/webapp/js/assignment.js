@@ -6,8 +6,7 @@
 let selectedAssignmentId = null;
 
 function createNewAssignment(){
-    document.getElementById("assignment-view").classList.remove("active");
-    document.getElementById("assignment-view").classList.remove("js-active");
+    removeViewSelections();
     var xhr= new XMLHttpRequest();
     xhr.open('GET', '/Urenregistratie/html/NewAssignment.html', true);
     xhr.onreadystatechange= function() {

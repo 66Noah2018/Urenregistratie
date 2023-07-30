@@ -88,7 +88,7 @@ input, .input, .textarea, select, .select{
     width: 500px;
 }
 
-.assignments-header{
+.assignments-header, .projects-header{
     font-size: xx-large;
     margin-left: 20px;
     text-decoration: underline;
@@ -98,7 +98,7 @@ input, .input, .textarea, select, .select{
     height: calc(100vh - 127px);
 }
 
-#assignment-overview{
+#assignment-overview, #project-overview{
     width: 504px;
     float: left;
     height: fit-content;
@@ -109,7 +109,7 @@ input, .input, .textarea, select, .select{
     border-radius: 5px;
 }
 
-#assignment-details-box{
+#assignment-details-box, #project-details-box{
     width: calc(100vw - 504px);
     float: right;
     height: calc(100vh - 127px - 48px - 4px);
@@ -121,13 +121,13 @@ input, .input, .textarea, select, .select{
     overflow-y: auto;
 }
 
-.no-assignment-selected{
+.no-assignment-selected, .no-project-selected, .no-assignments{
     text-align: center;
     font-style: italic;
     margin-top: 10px;
 }
 
-#save-updated-assignment, #delete-assignment{
+#save-updated-assignment, #delete-assignment, #save-updated-project, #delete-project{
     margin-top: 10px;   
 }
 
@@ -135,13 +135,18 @@ input, .input, .textarea, select, .select{
     display: none;
 }
 
-#assignment-details-form{
+#assignment-details-form, #project-details-form{
     width: 420px;
     float: left;
 }
 
 #assignment-details-hours-worked{
     width: 420px;
+    float: left;
+}
+
+#project-assignments{
+    width: 500px;
     float: left;
 }
 
@@ -171,4 +176,16 @@ input, .input, .textarea, select, .select{
 
 .delete-timeslot-dialog{
     width: 480px !important;
+}
+
+#project-assignments-box{
+    border-color: lightgray;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+.list-search-block {
+    margin-top: 5px;
+    margin-bottom: 10px;
 }

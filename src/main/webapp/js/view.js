@@ -16,24 +16,30 @@ function loadData(){
     document.getElementById("assignment-view").click();
 }
 
-function showProjectView(){
-    document.getElementById("content").setAttribute("src", "/Urenregistratie/html/ProjectView.html");
+function removeViewSelections(){
+    document.getElementById("assignment-view").classList.remove("active");
+    document.getElementById("assignment-view").classList.remove("js-active");
+    document.getElementById("project-view").classList.remove("active");
+    document.getElementById("project-view").classList.remove("js-active");
+    document.getElementById("supervisor-view").classList.remove("active");
+    document.getElementById("supervisor-view").classList.remove("js-active");
+    document.getElementById("hours-worked-view").classList.remove("active");
+    document.getElementById("hours-worked-view").classList.remove("js-active");
 }
 
-function getProjectName(projectId){
-    if (projectId === "null") { return "Self-assigned"; }
-    for (const project of projects){
-        console.log(project);
-        if (project.projectId === projectId) { return project.projectName; }
-    }
-}
-
-function getProjectIdByName(projectName){
-    if (projectName === "self-assigned") { return "null"; }
-    for (const project of projects){
-        console.log(project);
-        if (project.projectName === projectName) { return project.projectId; }
-    }
+// assignment view
+function showAssignmentView(){
+    var xhr= new XMLHttpRequest();
+    xhr.open('GET', '/Urenregistratie/html/AssignmentView.html', true);
+    xhr.onreadystatechange= function() {
+        if (this.readyState!==4) return;
+        if (this.status!==200) return;
+        let parser = new DOMParser();
+        let htmlDoc = parser.parseFromString(this.responseText,"text/html");
+        document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        processAssignments();
+    };
+    xhr.send();
 }
 
 function assignmentToListItem(assignment){
@@ -54,22 +60,8 @@ function assignmentToListItem(assignment){
     return html + "</li>";
 }
 
-function showAssignmentView(){
-    var xhr= new XMLHttpRequest();
-    xhr.open('GET', '/Urenregistratie/html/AssignmentView.html', true);
-    xhr.onreadystatechange= function() {
-        if (this.readyState!==4) return;
-        if (this.status!==200) return;
-        let parser = new DOMParser();
-        let htmlDoc = parser.parseFromString(this.responseText,"text/html");
-        document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
-        processAssignments();
-    };
-    xhr.send();
-}
-
 function processAssignments(){
-    let list = '<ul class="items-list" id="assignment-list"></li>';
+    let list = '<ul class="items-list" id="assignment-list" data-role="list" data-show-search="true"></li>';
     console.log(assignments);
     if (assignments !== null && assignments.length > 0) {
         assignments.forEach(assignment => {
@@ -82,4 +74,67 @@ function processAssignments(){
     document.getElementById("assignment-overview").innerHTML = list;
 }
 
+// project view
+function showProjectView(){
+    var xhr= new XMLHttpRequest();
+    xhr.open('GET', '/Urenregistratie/html/ProjectView.html', true);
+    xhr.onreadystatechange= function() {
+        if (this.readyState!==4) return;
+        if (this.status!==200) return;
+        let parser = new DOMParser();
+        let htmlDoc = parser.parseFromString(this.responseText,"text/html");
+        document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        processProjects();
+    };
+    xhr.send();
+}
 
+function processProjects(){
+    let list = '<ul class="items-list" id="project-list" data-role="list" data-show-search="true"></li>';
+    console.log(projects);
+    if (projects !== null && projects.length > 0) {
+        projects.forEach(project => {
+            list += projectToListItem(project);
+        });
+        list += "</ul>";
+    } else { list = "<div class='no-project-selected'>No projects yet</div>"; }
+       
+    document.getElementById("project-overview").innerHTML = list;
+}
+
+function projectToListItem(project){
+    return `<li id="${project.projectId}" onclick="showProjectDetails('${project.projectId}')">
+        <span class="label">${project.projectName}</span></li>`;
+}
+
+// supervisor view
+
+function showSupervisorView(){
+    var xhr= new XMLHttpRequest();
+    xhr.open('GET', '/Urenregistratie/html/SupervisorView.html', true);
+    xhr.onreadystatechange= function() {
+        if (this.readyState!==4) return;
+        if (this.status!==200) return;
+        let parser = new DOMParser();
+        let htmlDoc = parser.parseFromString(this.responseText,"text/html");
+        document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+//        processAssignments();
+    };
+    xhr.send();
+}
+
+// hours worked view
+
+function showHoursWorkedView(){
+    var xhr= new XMLHttpRequest();
+    xhr.open('GET', '/Urenregistratie/html/HoursWorkedView.html', true);
+    xhr.onreadystatechange= function() {
+        if (this.readyState!==4) return;
+        if (this.status!==200) return;
+        let parser = new DOMParser();
+        let htmlDoc = parser.parseFromString(this.responseText,"text/html");
+        document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+//        processAssignments();
+    };
+    xhr.send();
+}
