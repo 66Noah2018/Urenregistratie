@@ -79,7 +79,7 @@ function showProjectAssignments(){
     let assignmentsForProject = JSON.parse(servletRequest(SERVLET_URL + "?function=getAssignmentsByProjectId&projectId=" + selectedProjectId));
     let list = `<div class="no-assignments">No assignments for this project</div>`;
     if (assignmentsForProject !== null && assignmentsForProject.length > 0){
-        list = '<ul class="items-list" id="assignment-list"></li>';
+        list = '<ul class="items-list" id="assignment-list" data-role="list" data-show-search="true"></li>';
         assignmentsForProject.forEach(assignment => { list += projectAssignmentToListItem(assignment); });
         list += "</ul>";
     }
