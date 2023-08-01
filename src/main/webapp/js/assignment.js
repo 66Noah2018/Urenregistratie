@@ -73,7 +73,7 @@ function fillAssignmentDetailsFields(assignmentId){
     document.getElementById("assignment-details").value = assignmentToDisplay.assignmentDetails;
     document.getElementById("assignment-supervisor").value = assignmentToDisplay.supervisor;
     if (assignmentToDisplay.correspondingProjectId === "null") { document.getElementById("corresponding-project-selectbox").value = "self-assigned"; }
-    else { document.getElementById("corresponding-project-selectbox").value = assignmentToDisplay.correspondingProjectId; }
+    else { document.getElementById("corresponding-project-selectbox").value = getProjectName(assignmentToDisplay.correspondingProjectId); }
     document.getElementById("assignment-deadline").value = assignmentToDisplay.deadline.split(" ")[0];
     document.getElementById("assignment-state-selectbox").value = assignmentToDisplay.assignmentState;
     processHoursWorked(assignmentToDisplay.hoursWorked);
@@ -147,7 +147,6 @@ function editTimeslot(timeslotId){
         });
         document.getElementById("start-date-picker").value = timeSlot.startTime.split(" ")[0];
         document.getElementById("start-time-picker").value = timeSlot.startTime.split(" ")[1];
-        document.getElementById("end-date-picker").value = timeSlot.endTime.split(" ")[0];
         document.getElementById("end-time-picker").value = timeSlot.endTime.split(" ")[1];
     };
     xhr.send();
@@ -157,7 +156,6 @@ function processUpdatedTimeslot(timeslot){
     let startDate = document.getElementById("start-date-picker").value;
     let startTime = document.getElementById("start-time-picker").value;
     let startTimeNormalized = new Date('August 19, 1975 ' + startTime).toLocaleTimeString('it-IT');
-    let endDate = document.getElementById("end-date-picker").value;
     let endTime = document.getElementById("end-time-picker").value;
     let endTimeNormalized = new Date('August 19, 1975 ' + endTime).toLocaleTimeString('it-IT');
     
@@ -165,7 +163,7 @@ function processUpdatedTimeslot(timeslot){
         "assignmentId": selectedAssignmentId,
         "timeSlotId": timeslot.timeSlotId,
         "startTime": startDate + " " + startTimeNormalized,
-        "endTime": endDate + " " + endTimeNormalized,
+        "endTime": startDate + " " + endTimeNormalized,
         "hoursWritten": timeslot.hoursWritten
     }));
     assignments = result.assignments;
@@ -205,11 +203,12 @@ function processDeletedTimeslot(timeslotId){
 }
 function newTimeslot(){
     const currentDate = new Date();
+    const date = "0" + currentDate.getDate();
     const month = "0" + (currentDate.getMonth() + 1);
     const hour = "0" + currentDate.getHours();
     const minutes = "0" + currentDate.getMinutes();
     const seconds = "0" + currentDate.getSeconds();
-    const dateString = currentDate.getDate() + "-" + month.slice(-2) + "-" + currentDate.getFullYear() + " " + hour.slice(-2) + ":" + minutes.slice(-2) + ":" + seconds.slice(-2);
+    const dateString = date.slice(-2) + "-" + month.slice(-2) + "-" + currentDate.getFullYear() + " " + hour.slice(-2) + ":" + minutes.slice(-2) + ":" + seconds.slice(-2);
     let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addTimeSlot", {
         "assignmentId": selectedAssignmentId,
         "startTime": dateString,
@@ -225,11 +224,12 @@ function finishStopwatch(timeslotId){
     let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     const timeslot = assignmentToDisplay.hoursWorked.filter(timeslot => timeslot.timeSlotId === timeslotId)[0]; 
     const currentDate = new Date();
+    const date = "0" + currentDate.getDate();
     const month = "0" + (currentDate.getMonth() + 1);
     const hour = "0" + currentDate.getHours();
     const minutes = "0" + currentDate.getMinutes();
     const seconds = "0" + currentDate.getSeconds();
-    const dateString = currentDate.getDate() + "-" + month.slice(-2) + "-" + currentDate.getFullYear() + " " + hour.slice(-2) + ":" + minutes.slice(-2) + ":" + seconds.slice(-2);
+    const dateString = date.slice(-2) + "-" + month.slice(-2) + "-" + currentDate.getFullYear() + " " + hour.slice(-2) + ":" + minutes.slice(-2) + ":" + seconds.slice(-2);
     let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateTimeSlot", {
         "assignmentId": selectedAssignmentId,
         "timeSlotId": timeslotId,
@@ -294,14 +294,13 @@ function processAddedTimeslot(){
     let startDate = document.getElementById("start-date-picker").value;
     let startTime = document.getElementById("start-time-picker").value;
     let startTimeNormalized = new Date('August 19, 1975 ' + startTime).toLocaleTimeString('it-IT');
-    let endDate = document.getElementById("end-date-picker").value;
     let endTime = document.getElementById("end-time-picker").value;
     let endTimeNormalized = new Date('August 19, 1975 ' + endTime).toLocaleTimeString('it-IT');
     
     let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addTimeSlot", {
         "assignmentId": selectedAssignmentId,
         "startTime": startDate + " " + startTimeNormalized,
-        "endTime": endDate + " " + endTimeNormalized
+        "endTime": startDate + " " + endTimeNormalized
     }));
     assignments = result.assignments;
     projects = result.projects;

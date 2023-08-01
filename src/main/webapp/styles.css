@@ -88,7 +88,7 @@ input, .input, .textarea, select, .select{
     width: 500px;
 }
 
-.assignments-header, .projects-header{
+.assignments-header, .projects-header, .supervisors-header, .hours-worked-header{
     font-size: xx-large;
     margin-left: 20px;
     text-decoration: underline;
@@ -98,7 +98,7 @@ input, .input, .textarea, select, .select{
     height: calc(100vh - 127px);
 }
 
-#assignment-overview, #project-overview{
+#assignment-overview, #project-overview, #supervisors-overview{
     width: 504px;
     float: left;
     height: fit-content;
@@ -109,7 +109,7 @@ input, .input, .textarea, select, .select{
     border-radius: 5px;
 }
 
-#assignment-details-box, #project-details-box{
+#assignment-details-box, #project-details-box, #supervisors-details-box{
     width: calc(100vw - 504px);
     float: right;
     height: calc(100vh - 127px - 48px - 4px);
@@ -121,7 +121,7 @@ input, .input, .textarea, select, .select{
     overflow-y: auto;
 }
 
-.no-assignment-selected, .no-project-selected, .no-assignments{
+.no-assignment-selected, .no-project-selected, .no-assignments, .no-supervisor-selected{
     text-align: center;
     font-style: italic;
     margin-top: 10px;
@@ -188,4 +188,72 @@ input, .input, .textarea, select, .select{
 .list-search-block {
     margin-top: 5px;
     margin-bottom: 10px;
+}
+
+.hours-box{
+    width: 300px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    float: left;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.hours-box-header{
+    text-align: center;
+    font-size: larger;
+}
+
+.no-hours-for-project{
+    font-size: smaller;
+    font-style: italic;
+    margin-left: 10px;
+}
+
+.mark-all-as-written-switch{
+    float: right;
+    margin-right: 10px;
+}
+
+.mark-all-as-written-switch caption{
+    font-size: small;
+}
+
+.mark-all-as-written-switch .check::after{
+    background: #60a917 !important;
+    border-color: #adeb6e !important;
+}
+
+.mark-all-as-written-switch input[type="checkbox"]:checked ~ .check{
+    background: #60a917 !important;
+}
+
+.mark-all-as-written-switch input[type="checkbox"]:checked ~ .check::after{
+    border-color: #ffffff !important;
+    background: #ffffff !important;
+}
+
+.mark-all-as-written-switch .check {
+    border-radius: 10px;
+}
+
+.month-selection{
+    display: inline-flex;
+    width: -webkit-fill-available;
+    margin-left: 10px;
+}
+
+#month-picker{
+    line-height: 45px;
+}
+
+.month-selection input {
+    height: 40px !important;
+    width: 150px !important;
+}
+
+.no-month-selected{
+    margin-left: 20px;
+    font-style: italic;
+    margin-top: 10px;
 }

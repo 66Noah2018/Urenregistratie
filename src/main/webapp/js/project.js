@@ -21,9 +21,8 @@ function createNewProject() {
 
 function getAllProjectNames(){
     let projectNames = [];
-    if (projects == null) { return projectNames; }
+    if (projects === null) { return projectNames; }
     for (const project of projects){
-        console.log(project);
         projectNames.push(project.projectName);
     }
     return projectNames;
@@ -32,7 +31,6 @@ function getAllProjectNames(){
 function getProjectName(projectId){
     if (projectId === "null") { return "Self-assigned"; }
     for (const project of projects){
-        console.log(project);
         if (project.projectId === projectId) { return project.projectName; }
     }
 }
@@ -40,7 +38,6 @@ function getProjectName(projectId){
 function getProjectIdByName(projectName){
     if (projectName === "self-assigned") { return "null"; }
     for (const project of projects){
-        console.log(project);
         if (project.projectName === projectName) { return project.projectId; }
     }
 }
@@ -91,7 +88,7 @@ function projectAssignmentToListItem(assignment){
     let html = `<li id="${assignment.assignmentId}" onclick="showProjectAssignmentDetails('${assignment.assignmentId}')">
         <span class="label">${assignment.assignmentName}</span>
         <span class="second-label">${getProjectName(assignment.correspondingProjectId)}</span>`;
-    if (assignment.deadline !== null) {
+    if (assignment.assignmentState !== "FINISHED" && assignment.deadline !== null) {
         const re = /(.*?)-(.*?)-(.*?) (.*?):(.*?):(.*)/gm;
         deadlineArray = re.exec(assignment.deadline);
         const deadlineDate = new Date(deadlineArray[3], deadlineArray[2] - 1, deadlineArray[1], deadlineArray[4], deadlineArray[5], deadlineArray[6], 0);

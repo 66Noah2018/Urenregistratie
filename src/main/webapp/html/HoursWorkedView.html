@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+<p class="hours-worked-header">Hours worked per project</p>
+<div class="month-selection">
+    <p class="form-header" id="month-picker">Month to view</p>
+    <!--<input data-role="datepicker" data-day="false" id="hours-worked-date-picker" data-input-format="MM-YYYY" data-format="MM-YYYY">-->
+    <input type="month" id="hours-worked-date-picker" onchange="updateHoursWorkedView()">
+    <input type="checkbox" data-role="switch" data-caption="Show only unwritten hours" data-caption-position="left" class="mark-all-as-written-switch" onclick="updateHoursWorkedView()" id="written-hours-switch">
+    <!--<button class="button" onclick="updateHoursWorkedView()">Show hours worked</button>-->
+</div>
+<div id="hours-worked-project-box">
+    <p class="no-month-selected">Select a year and month to view registered hours</p>
+</div>

@@ -66,7 +66,7 @@ public class urenregistratieServlet extends HttpServlet {
                 response.getWriter().write(JSONEncoder.encodeTimeSlots(hoursForProject));
                 break;
             case "getUnwrittenHoursByProjectId":
-                ArrayList<TimeSlot> unwrittenHoursForProject = Utils.getHoursByProjectId(assignments, request.getParameter("projectId"));
+                ArrayList<TimeSlot> unwrittenHoursForProject = Utils.getUnwrittenHoursByProjectId(assignments, request.getParameter("projectId"));
                 response.getWriter().write(JSONEncoder.encodeTimeSlots(unwrittenHoursForProject));
                 break;
             case "getAllHours":
@@ -96,7 +96,10 @@ public class urenregistratieServlet extends HttpServlet {
                 break;
             case "getSupervisors":
                 ArrayList<String> supervisors = Utils.getSupervisors(assignments);
-                response.getWriter().write(supervisors.toString());
+                String encodedSupervisors = "[";
+                for (String supervisor : supervisors) { encodedSupervisors += "\"" + supervisor + "\","; }
+                encodedSupervisors = encodedSupervisors.substring(0, encodedSupervisors.length() - 1) + "]";
+                response.getWriter().write(encodedSupervisors);
                 break;
             case "getAssignmentsWithoutDeadline":
                 requestedAssignments = Utils.getAssignmentsWithoutDeadline(
@@ -117,6 +120,10 @@ public class urenregistratieServlet extends HttpServlet {
                 break;
             case "updateTimeSlot":
                 updateTimeSlot(request);
+                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                break;
+            case "updateTimeSlotState":
+                updateTimeSlotState(request);
                 response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
                 break;
             case "deleteTimeSlot":
@@ -237,6 +244,23 @@ private void updateTimeSlot (HttpServletRequest request) throws IOException{
     if (updatedTimeSlot != null) {
         for (int i = 0; i < assignments.size(); i++){
             if (assignmentId.equals(assignments.get(i).getAssignmentId())){
+                Assignment newAssignment = assignments.get(i);
+                newAssignment.updateHoursWorked(updatedTimeSlot);
+                assignments.set(i, newAssignment);
+                return;
+            }
+        }
+    }
+}
+
+private void updateTimeSlotState (HttpServletRequest request) throws IOException{
+    String timeSlotId = request.getParameter("timeSlotId");
+    Boolean state = Boolean.parseBoolean(request.getParameter("state"));
+    for (int i = 0; i < assignments.size(); i++){
+        for (TimeSlot timeslot : assignments.get(i).getHoursWorked()){
+            if (timeSlotId.equals(timeslot.getTimeSlotId())){
+                TimeSlot updatedTimeSlot = timeslot;
+                updatedTimeSlot.setHoursWritten(state);
                 Assignment newAssignment = assignments.get(i);
                 newAssignment.updateHoursWorked(updatedTimeSlot);
                 assignments.set(i, newAssignment);
