@@ -151,7 +151,12 @@ function showHoursWorkedView(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
-//        processHoursWorkedForHoursWorkedView();
+        const currentDate = new Date();
+        const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
+        const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+        const selectorValue = year + "-" + month;
+        document.getElementById("hours-worked-date-picker").value = selectorValue;
+        processHoursWorkedForHoursWorkedView(month, year);
     };
     xhr.send();
 }
