@@ -15,6 +15,7 @@ function createNewAssignment(){
         let parser = new DOMParser();
         htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        disableFilters();
         fillProjectSelectBox();
     };
     xhr.send();
@@ -333,4 +334,38 @@ function deleteAssignment(){
     projects = result.projects;
     selectedAssignmentId = null;
     showAssignmentView();
+}
+
+function filterAssignments(checkboxClicked){
+    let targetClicked = document.getElementById(checkboxClicked);
+    if (targetClicked.classList.contains("checked")) { targetClicked.classList.remove("checked"); }
+    else { targetClicked.classList.add("checked"); }
+    
+    const showNotStarted = document.getElementById("not-started-checkbox").classList.contains("checked");
+    const showStarted = document.getElementById("started-checkbox").classList.contains("checked");
+    const showFinished = document.getElementById("finished-checkbox").classList.contains("checked");
+    const showInsufficientInformation = document.getElementById("insufficient-information-checkbox").classList.contains("checked");
+    
+    let statesToRequest = "[";
+    if (showNotStarted) { statesToRequest += "NOT_STARTED,"; }
+    if (showStarted) { statesToRequest += "STARTED,"; }
+    if (showFinished) { statesToRequest += "FINISHED,"; } 
+    if (showInsufficientInformation) { statesToRequest += "INSUFFICIENT_INFORMATION,"; }
+    if (statesToRequest === "[]") { 
+        assignments = []; 
+        return;
+    } else {
+        statesToRequest = statesToRequest.substring(0, statesToRequest.length - 1) + "]";
+    }
+    assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", statesToRequest));
+    processAssignments();
+}
+
+function showAllAssignments(){
+    document.getElementById("not-started-checkbox").classList.add("checked");
+    document.getElementById("started-checkbox").classList.add("checked");
+    document.getElementById("finished-checkbox").classList.add("checked");
+    document.getElementById("insufficient-information-checkbox").classList.add("checked");
+    assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", "[NOT_STARTED, STARTED, INSUFFICIENT_INFORMATION, FINISHED]"));
+    processAssignments();
 }

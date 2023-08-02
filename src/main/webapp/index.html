@@ -6,7 +6,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- metro 4 -->
-        <link rel="stylesheet" href="https://cdn.korzh.com/metroui/v4.5.1/css/metro-all.min.css">
+        <link rel="stylesheet" href="https://cdn.korzh.com/metroui/v4/css/metro-all.min.css">
         <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
         <!-- fontawesome v5 -->
         <script src="https://kit.fontawesome.com/e64cafaf4a.js" crossorigin="anonymous"></script>
@@ -71,6 +71,29 @@
                             </button>
                         </div>
                         <span class="title">View</span>
+                    </div>
+                    <div class="group">
+                        <div class="ribbon-split-button" id="filter-button">
+                            <button class="ribbon-main">
+                                <span class="icon">
+                                    <span class="mif-filter"></span>
+                                </span>
+                            </button>
+                            <span class="ribbon-split dropdown-toggle">Assignment filter</span>
+                            <ul class="ribbon-dropdown" data-role="dropdown" data-duration="100">
+                                <li class="checked" id="not-started-checkbox" onclick="filterAssignments('not-started-checkbox')"><a href="#">Not started</a></li>
+                                <li class="checked" id="started-checkbox" onclick="filterAssignments('started-checkbox')"><a href="#">Started</a></li>
+                                <li id="finished-checkbox" onclick="filterAssignments('finished-checkbox')"><a href="#">Finished</a></li>
+                                <li class="checked" id="insufficient-information-checkbox" onclick="filterAssignments('insufficient-information-checkbox')"><a href="#">Insufficient information</a></li>
+                            </ul>
+                        </div>
+                        <button class="ribbon-button" id="no-filter-btn" onclick="showAllAssignments()">
+                            <span class="icon">
+                                <span class="fas fa-filter-circle-xmark"></span>
+                            </span>
+                            <span class="caption">Show all assignments</span>
+                        </button>
+                        <span class="title">Filter</span>
                     </div>
                 </div>
             </div>

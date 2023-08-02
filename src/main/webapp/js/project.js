@@ -15,6 +15,7 @@ function createNewProject() {
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        disableFilters();
     };
     xhr.send();
 }

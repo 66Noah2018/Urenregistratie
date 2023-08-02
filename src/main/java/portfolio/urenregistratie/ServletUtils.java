@@ -78,7 +78,7 @@ public class ServletUtils {
     
     public static ArrayList<String> getStringArrayListFromRequestBody(HttpServletRequest request) throws IOException{
         String requestBody = getBody(request);
-        requestBody = requestBody.substring(1, requestBody.length() - 1); // remove []
+        requestBody = requestBody.substring(2, requestBody.length() - 2); // remove []
         String[] items = requestBody.split(",");
         ArrayList<String> requestArrayList = new ArrayList<>();
         for (String item : items){

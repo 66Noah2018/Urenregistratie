@@ -13,6 +13,7 @@ function loadData(){
     if (result !== null) {
         projects = result.projects;
         assignments = result.assignments;
+        assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", "[NOT_STARTED, STARTED, INSUFFICIENT_INFORMATION]"));
     }
     document.getElementById("assignment-view").click();
 }
@@ -28,6 +29,22 @@ function removeViewSelections(){
     document.getElementById("hours-worked-view").classList.remove("js-active");
 }
 
+function disableFilters(enable = false){
+    document.getElementById("no-filter-btn").disabled = !enable;
+    document.getElementById("filter-button").disabled = !enable;
+    let nodes = document.getElementById("filter-button").getElementsByTagName('*');
+    for(let i = 0; i < nodes.length; i++){
+         nodes[i].disabled = !enable;
+    }
+    if (enable){
+        $(".dropdown-toggle").css("pointer-events", "auto");
+    } else {
+        $(".dropdown-toggle").css("pointer-events", "none");
+    }
+
+//    document.getElementById("no-filter-btn").disabled = !enable;
+}
+
 // assignment view
 function showAssignmentView(){
     var xhr= new XMLHttpRequest();
@@ -38,6 +55,7 @@ function showAssignmentView(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        disableFilters(true);
         processAssignments();
     };
     xhr.send();
@@ -84,6 +102,7 @@ function showProjectView(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        disableFilters();
         processProjects();
     };
     xhr.send();
@@ -117,6 +136,7 @@ function showSupervisorView(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        disableFilters();
         processSupervisors();
     };
     xhr.send();
@@ -151,6 +171,7 @@ function showHoursWorkedView(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        disableFilters();
         const currentDate = new Date();
         const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
         const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
