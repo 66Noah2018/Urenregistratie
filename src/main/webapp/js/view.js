@@ -154,8 +154,6 @@ function showHoursWorkedView(){
         const currentDate = new Date();
         const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
         const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
-        const selectorValue = year + "-" + month;
-        document.getElementById("hours-worked-date-picker").value = selectorValue;
         processHoursWorkedForHoursWorkedView(month, year);
     };
     xhr.send();
@@ -267,12 +265,13 @@ function hourOverviewTimeslotToTableRow(key, value){
     let hh = Math.floor(diffEpoch / 1000 / 60 / 60);
     hh = "0" + hh;
     diffEpoch -= hh * 1000 * 60 * 60;
-    let mm = Math.floor(diffEpoch / 1000 / 60);
-    mm = "0" + mm;
-    diffEpoch -= mm * 1000 * 60;
-    let ss = Math.floor(diffEpoch / 1000);
-    ss = "0" + ss;
+    let mm = (diffEpoch / 1000 / 60);
+    mm = Math.round((mm * 100 / 60));
+//    mm = "0" + mm;
+//    diffEpoch -= mm * 1000 * 60;
+//    let ss = Math.floor(diffEpoch / 1000);
+//    ss = "0" + ss;
     let code = `<tr>
-        <td>${key}</td><td>${hh.slice(-2)}:${mm.slice(-2)}:${ss.slice(-2)}</td>`;
+        <td>${key}</td><td>${hh.slice(-2)}.${mm}h</td>`;
     return code + "</td></tr>";
 }
