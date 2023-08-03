@@ -234,10 +234,10 @@ function markAllAsWritten(projectId){
 }
 
 function updateHoursWorkedView(){
-    const month = (document.getElementById("hours-worked-date-picker").value).split("-")[1];
-    const year = (document.getElementById("hours-worked-date-picker").value).split("-")[0];
+    const month = (document.getElementById("hours-worked-date-picker").value).split("-")[0];
+    const year = (document.getElementById("hours-worked-date-picker").value).split("-")[1];
     const unwrittenHoursOnly = document.getElementById("written-hours-switch").checked;
-    if (month !== "undefined-" && month !== undefined && year !== undefined) { processHoursWorkedForHoursWorkedView(month, year, unwrittenHoursOnly); }
+    if (month !== undefined && year !== undefined) { processHoursWorkedForHoursWorkedView(month, year, unwrittenHoursOnly); }
 }
 
 function processUnwrittenHoursProject(project, month, year){

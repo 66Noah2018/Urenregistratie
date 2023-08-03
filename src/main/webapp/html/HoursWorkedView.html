@@ -1,10 +1,8 @@
 <p class="hours-worked-header">Hours worked per project</p>
 <div class="month-selection">
     <p class="form-header" id="month-picker">Month to view</p>
-    <!--<input data-role="datepicker" data-day="false" data-input-format="MM-YYYY" data-format="MM-YYYY" id="hours-worked-date-picker">-->
-    <input type="month" id="hours-worked-date-picker" onchange="updateHoursWorkedView()">
+    <input data-role="datepicker" data-day="false" data-input-format="MM-YYYY" data-format="MM-YYYY" id="hours-worked-date-picker" onchange="updateHoursWorkedView()">
     <input type="checkbox" data-role="switch" data-caption="Show only unwritten hours" data-caption-position="left" class="show-only-unwritten-switch" onclick="updateHoursWorkedView()" id="written-hours-switch">
-    <!--<button class="button" onclick="updateHoursWorkedView()">Show hours worked</button>-->
 </div>
 <div id="hours-worked-project-box">
     <p class="no-month-selected">Select a year and month to view registered hours</p>
