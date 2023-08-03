@@ -174,7 +174,7 @@ input, .input, .textarea, select, .select{
     width: 900px !important;
 }
 
-.delete-timeslot-dialog{
+.delete-timeslot-dialog, .delete-assignment-dialog, .delete-project-dialog{
     width: 480px !important;
 }
 
@@ -284,4 +284,13 @@ input, .input, .textarea, select, .select{
     -ms-transform:rotate(-5deg);
     -o-transform:rotate(-5deg);
     transform:rotate(-5deg);
+}
+
+.edit-notify{
+    background-color: orange;
+}
+
+.save-success {
+    background-color: #60a917;
+    color: white;
 }

@@ -38,6 +38,7 @@ function saveNewAssignment(){
     assignments = result.assignments;
     projects = result.projects;
     document.getElementById("assignment-view").click();
+    showNotification("Saved", "New assignment created", infoBoxProperties.success);
 }
 
 function fillProjectSelectBox(){
@@ -171,6 +172,7 @@ function processUpdatedTimeslot(timeslot){
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
+    showNotification("Saved", "Timeslot updated", infoBoxProperties.success);
 }
 
 function deleteTimeslot(timeslotId){
@@ -201,6 +203,7 @@ function processDeletedTimeslot(timeslotId){
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
+    showNotification("Deleted", "Timeslot deleted", infoBoxProperties.success);
 }
 function newTimeslot(){
     const currentDate = new Date();
@@ -219,6 +222,7 @@ function newTimeslot(){
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
+    showNotification("Saved", "New timeslot created", infoBoxProperties.success);
 }
 
 function finishStopwatch(timeslotId){
@@ -242,6 +246,7 @@ function finishStopwatch(timeslotId){
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
+    showNotification("Saved", "Timeslot updated", infoBoxProperties.success);
 }
 
 function updateHoursWritten(timeslotId){
@@ -260,6 +265,7 @@ function updateHoursWritten(timeslotId){
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
+    showNotification("Saved", "Timeslot updated", infoBoxProperties.success);
 }
 
 function addTimeslot(){
@@ -308,6 +314,7 @@ function processAddedTimeslot(){
     
     let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
+    showNotification("Saved", "New timeslot created", infoBoxProperties.success);
 }
 
 function saveUpdatedAssignment(){
@@ -326,14 +333,37 @@ function saveUpdatedAssignment(){
     assignments = result.assignments;
     projects = result.projects;
     processAssignments();
+    showNotification("Saved", "Assignment updated", infoBoxProperties.success);
 }
 
 function deleteAssignment(){
+    Metro.dialog.create({
+        clsDialog: "delete-assignment-dialog",
+        title: "Delete assignment",
+        content: "<div>Are you sure you want to delete this assignment? This action cannot be undone.</div>",
+        actions: [
+            {
+                caption: "Delete",
+                cls: "js-dialog-close alert",
+                onclick: function(){
+                    processDeletedAssignment();
+                }
+            },
+            {
+                caption: "Cancel",
+                cls: "js-dialog-close"
+            }
+        ]
+    });
+}
+
+function processDeletedAssignment(){
     let result = JSON.parse(servletRequest(SERVLET_URL + "?function=deleteAssignment&assignmentId=" + selectedAssignmentId));
     assignments = result.assignments;
     projects = result.projects;
     selectedAssignmentId = null;
     showAssignmentView();
+    showNotification("Deleted", "Assignment deleted", infoBoxProperties.success);
 }
 
 function filterAssignments(checkboxClicked){

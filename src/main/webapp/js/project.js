@@ -53,6 +53,7 @@ function saveNewProject(){
     assignments = result.assignments;
     projects = result.projects;
     document.getElementById("project-view").click();
+    showNotification("Saved", "New project created", infoBoxProperties.success);
 }
 
 function showProjectDetails(projectId){
@@ -119,12 +120,35 @@ function saveUpdatedProject(){
     assignments = result.assignments;
     projects = result.projects;
     processProjects();
+    showNotification("Saved", "Project updated", infoBoxProperties.success);
 }
 
 function deleteProject(){
+     Metro.dialog.create({
+        clsDialog: "delete-project-dialog",
+        title: "Delete project",
+        content: "<div>Are you sure you want to delete this project? This action cannot be undone.</div>",
+        actions: [
+            {
+                caption: "Delete",
+                cls: "js-dialog-close alert",
+                onclick: function(){
+                    processDeletedProject();
+                }
+            },
+            {
+                caption: "Cancel",
+                cls: "js-dialog-close"
+            }
+        ]
+    });
+}
+
+function processDeletedProject(){   
     let result = JSON.parse(servletRequest(SERVLET_URL + "?function=deleteProject&projectId=" + selectedProjectId));
     assignments = result.assignments;
     projects = result.projects;
     selectedProjectId = null;
     document.getElementById("project-view").click();
+    showNotification("Deleted", "Project deleted", infoBoxProperties.success);
 }

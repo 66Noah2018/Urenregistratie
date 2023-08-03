@@ -8,6 +8,12 @@ let assignments = null;
 const SERVLET_URL = "/Urenregistratie/urenregistratieServlet";
 let timeSlotsPerDate = {};
 
+const infoBoxProperties = {
+    warning: {animation: 'easeOutBounce', cls: "edit-notify"},
+    warningKeepOpen: {animation: 'easeOutBounce', cls: "edit-notify", keepOpen: true},
+    success: {animation: 'easeOutBounce', cls: "save-success"}
+};
+
 function loadData(){
     let result = JSON.parse(servletRequest(SERVLET_URL + "?function=getState"));
     if (result !== null) {
@@ -41,8 +47,10 @@ function disableFilters(enable = false){
     } else {
         $(".dropdown-toggle").css("pointer-events", "none");
     }
+}
 
-//    document.getElementById("no-filter-btn").disabled = !enable;
+function showNotification(title, content, notificationClass){
+    Metro.notify.create(content, title, notificationClass);
 }
 
 // assignment view
@@ -231,6 +239,7 @@ function markAllAsWritten(projectId){
     assignments = result.assignments;
     projects = result.projects;
     updateHoursWorkedView();
+    showNotification("Saved", `The timeslots for project ${getProjectName(projectId)} have been marked as written`, infoBoxProperties.success);
 }
 
 function updateHoursWorkedView(){
@@ -288,10 +297,6 @@ function hourOverviewTimeslotToTableRow(key, value){
     diffEpoch -= hh * 1000 * 60 * 60;
     let mm = (diffEpoch / 1000 / 60);
     mm = Math.round((mm * 100 / 60));
-//    mm = "0" + mm;
-//    diffEpoch -= mm * 1000 * 60;
-//    let ss = Math.floor(diffEpoch / 1000);
-//    ss = "0" + ss;
     let code = `<tr>
         <td>${key}</td><td>${hh.slice(-2)}.${mm}h</td>`;
     return code + "</td></tr>";
