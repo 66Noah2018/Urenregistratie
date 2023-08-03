@@ -21,6 +21,37 @@ function createNewAssignment(){
     xhr.send();
 }
 
+function validateAssignmentForm(){
+    let allFieldsOK = true;
+    const assignmentName = document.getElementById("assignment-name").value;
+    const nameErrorDiv = document.getElementById("assignment-name-group");
+    const supervisor = document.getElementById("assignment-supervisor").value;
+    const supervisorErrorDiv = document.getElementById("assignment-supervisor-group");
+    if (assignmentName === "" || assignmentName === null || assignmentName === undefined){
+        allFieldsOK = false;
+        nameErrorDiv.style.display = "block";
+    } else { nameErrorDiv.style.display = "none"; }
+    
+    if (supervisor === "" || supervisor === null || supervisor === undefined){
+        allFieldsOK = false;
+        supervisorErrorDiv.style.display = "block";
+    } else { supervisorErrorDiv.style.display = "none"; }
+
+    return allFieldsOK;
+}
+
+function validateTimeslotForm(){
+    let allFieldsOK = true;
+    const startDate = document.getElementById("start-date-picker").value;
+    const startDateErrorDiv = document.getElementById("start-date-picker-group");
+    if (startDate === "" || startDate === null || startDate === undefined){
+        allFieldsOK = false;
+        startDateErrorDiv.style.display = "block";
+    } else { startDateErrorDiv.style.display = "none"; }
+
+    return allFieldsOK;
+}
+
 function saveNewAssignment(){
     const assignmentName = document.getElementById("assignment-name").value;
     const assignmentDetails = document.getElementById("assignment-details").value;
@@ -28,17 +59,20 @@ function saveNewAssignment(){
     const correspondingProjectName = document.getElementById("corresponding-project-selectbox").value;
     const correspondingProjectId = getProjectIdByName(correspondingProjectName);
     const assignmentDeadline = document.getElementById("assignment-deadline").value;
-    const result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addAssignment", {
-        "assignmentName": assignmentName,
-        "assignmentDetails": assignmentDetails,
-        "supervisor": assignmentSupervisor,
-        "correspondingProjectId": correspondingProjectId,
-        "deadline": assignmentDeadline + " 00:00:00"
-    }));
-    assignments = result.assignments;
-    projects = result.projects;
-    document.getElementById("assignment-view").click();
-    showNotification("Saved", "New assignment created", infoBoxProperties.success);
+    const formValidationPassed = validateAssignmentForm();
+    if (formValidationPassed){
+        const result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addAssignment", {
+            "assignmentName": assignmentName,
+            "assignmentDetails": assignmentDetails,
+            "supervisor": assignmentSupervisor,
+            "correspondingProjectId": correspondingProjectId,
+            "deadline": assignmentDeadline + " 00:00:00"
+        }));
+        assignments = result.assignments;
+        projects = result.projects;
+        document.getElementById("assignment-view").click();
+        showNotification("Saved", "New assignment created", infoBoxProperties.success);
+    }  
 }
 
 function fillProjectSelectBox(){
@@ -205,6 +239,7 @@ function processDeletedTimeslot(timeslotId){
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Deleted", "Timeslot deleted", infoBoxProperties.success);
 }
+
 function newTimeslot(){
     const currentDate = new Date();
     const date = "0" + currentDate.getDate();
@@ -222,7 +257,7 @@ function newTimeslot(){
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
-    showNotification("Saved", "New timeslot created", infoBoxProperties.success);
+    showNotification("Saved", "New timeslot created", infoBoxProperties.success);   
 }
 
 function finishStopwatch(timeslotId){
@@ -284,7 +319,10 @@ function addTimeslot(){
                         caption: "Save",
                         cls: "js-dialog-close",
                         onclick: function(){
-                            processAddedTimeslot();
+                            const formValidationPassed = validateTimeslotForm();
+                            if (formValidationPassed){
+                                processAddedTimeslot();
+                            } else { event.stopPropagation();  }
                         }
                     },
                     {
@@ -303,7 +341,7 @@ function processAddedTimeslot(){
     let startTimeNormalized = new Date('August 19, 1975 ' + startTime).toLocaleTimeString('it-IT');
     let endTime = document.getElementById("end-time-picker").value;
     let endTimeNormalized = new Date('August 19, 1975 ' + endTime).toLocaleTimeString('it-IT');
-    
+
     let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addTimeSlot", {
         "assignmentId": selectedAssignmentId,
         "startTime": startDate + " " + startTimeNormalized,
@@ -311,7 +349,7 @@ function processAddedTimeslot(){
     }));
     assignments = result.assignments;
     projects = result.projects;
-    
+
     let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Saved", "New timeslot created", infoBoxProperties.success);
@@ -319,21 +357,24 @@ function processAddedTimeslot(){
 
 function saveUpdatedAssignment(){
     // timeslot changes are processed onchange, so we only need to process the details
-    let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
-    let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateAssignment", {
-        "assignmentId": selectedAssignmentId,
-        "assignmentName": document.getElementById("assignment-name").value,
-        "assignmentDetails": document.getElementById("assignment-details").value,
-        "supervisor": document.getElementById("assignment-supervisor").value,
-        "correspondingProjectId": getProjectIdByName(document.getElementById("corresponding-project-selectbox").value),
-        "hoursWorked": assignmentToDisplay.hoursWorked,
-        "assignmentState": document.getElementById("assignment-state-selectbox").value,
-        "deadline": document.getElementById("assignment-deadline").value + " 00:00:00"
-    }));
-    assignments = result.assignments;
-    projects = result.projects;
-    processAssignments();
-    showNotification("Saved", "Assignment updated", infoBoxProperties.success);
+    const formValidationPassed = validateAssignmentForm();
+    if (formValidationPassed){
+        let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
+        let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateAssignment", {
+            "assignmentId": selectedAssignmentId,
+            "assignmentName": document.getElementById("assignment-name").value,
+            "assignmentDetails": document.getElementById("assignment-details").value,
+            "supervisor": document.getElementById("assignment-supervisor").value,
+            "correspondingProjectId": getProjectIdByName(document.getElementById("corresponding-project-selectbox").value),
+            "hoursWorked": assignmentToDisplay.hoursWorked,
+            "assignmentState": document.getElementById("assignment-state-selectbox").value,
+            "deadline": document.getElementById("assignment-deadline").value + " 00:00:00"
+        }));
+        assignments = result.assignments;
+        projects = result.projects;
+        processAssignments();
+        showNotification("Saved", "Assignment updated", infoBoxProperties.success);
+    }
 }
 
 function deleteAssignment(){

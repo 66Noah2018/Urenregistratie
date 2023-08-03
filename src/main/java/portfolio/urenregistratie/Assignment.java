@@ -136,11 +136,15 @@ public class Assignment {
     }
     public void setDeadline (LocalDateTime deadline) { this.deadline = deadline; }
     
-    public void addHoursWorked (TimeSlot newHoursWorked) { this.hoursWorked.add(newHoursWorked); }
+    public void addHoursWorked (TimeSlot newHoursWorked) { 
+        this.hoursWorked.add(newHoursWorked); 
+        this.sortTimeSlots();
+    }
     public void removeHoursWorked (String removedHoursWorkedId) { 
         for (int i = 0; i < this.hoursWorked.size(); i++){
             if (this.hoursWorked.get(i).getTimeSlotId().equals(removedHoursWorkedId)) {
                 this.hoursWorked.remove(i);
+                this.sortTimeSlots();
                 return;
             }
         }
@@ -149,6 +153,7 @@ public class Assignment {
         for (int i = 0; i < this.hoursWorked.size(); i++){
             if (this.hoursWorked.get(i).getTimeSlotId().equals(updatedHoursWorked.getTimeSlotId())) {
                 this.hoursWorked.set(i, updatedHoursWorked);
+                this.sortTimeSlots();
                 return;
             }
         }

@@ -58,8 +58,7 @@ public class urenregistratieServlet extends HttpServlet {
                 break;
             case "getProjectById":
                 Project requestedProject = Utils.getProjectById(projects, request.getParameter("projectId"));
-                response.getWriter().write(JSONEncoder.encodeProject(
-                        requestedProject));
+                response.getWriter().write(JSONEncoder.encodeProject(requestedProject));
                 break;
             case "getHoursByProjectId":
                 ArrayList<TimeSlot> hoursForProject = Utils.getHoursByProjectId(assignments, request.getParameter("projectId"));

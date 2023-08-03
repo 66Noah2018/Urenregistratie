@@ -44,16 +44,19 @@ function getProjectIdByName(projectName){
 }
 
 function saveNewProject(){
-    const projectName = document.getElementById("project-name").value;
-    const projectCode = document.getElementById("project-code").value;
-    let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addProject", {
-        "projectName": projectName,
-        "projectCode": projectCode
-    }));
-    assignments = result.assignments;
-    projects = result.projects;
-    document.getElementById("project-view").click();
-    showNotification("Saved", "New project created", infoBoxProperties.success);
+    const formValidationPassed = validateProjectForm();
+    if (formValidationPassed) {
+        const projectName = document.getElementById("project-name").value;
+        const projectCode = document.getElementById("project-code").value;
+        let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addProject", {
+            "projectName": projectName,
+            "projectCode": projectCode
+        }));
+        assignments = result.assignments;
+        projects = result.projects;
+        document.getElementById("project-view").click();
+        showNotification("Saved", "New project created", infoBoxProperties.success);
+    }
 }
 
 function showProjectDetails(projectId){
@@ -110,17 +113,21 @@ function showProjectAssignmentDetails(assignmentId){
 }
 
 function saveUpdatedProject(){
-    const projectName = document.getElementById("project-name").value;
-    const projectCode = document.getElementById("project-code").value;
-    let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateProject", {
-        "projectId": selectedProjectId,
-        "projectName": projectName,
-        "projectCode": projectCode
-    }));
-    assignments = result.assignments;
-    projects = result.projects;
-    processProjects();
-    showNotification("Saved", "Project updated", infoBoxProperties.success);
+    const formValidationPassed = validateProjectForm();
+    if (formValidationPassed) {
+        const projectName = document.getElementById("project-name").value;
+        const projectCode = document.getElementById("project-code").value;
+        let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateProject", {
+            "projectId": selectedProjectId,
+            "projectName": projectName,
+            "projectCode": projectCode
+        }));
+        assignments = result.assignments;
+        projects = result.projects;
+        processProjects();
+        showProjectAssignments();
+        showNotification("Saved", "Project updated", infoBoxProperties.success);
+    }
 }
 
 function deleteProject(){
@@ -151,4 +158,24 @@ function processDeletedProject(){
     selectedProjectId = null;
     document.getElementById("project-view").click();
     showNotification("Deleted", "Project deleted", infoBoxProperties.success);
+}
+
+function validateProjectForm(){
+    let allFieldsOK = true;
+    const projectName = document.getElementById("project-name").value;
+    const nameErrorDiv = document.getElementById("project-name-group");
+    const projectCode = document.getElementById("project-code").value;
+    const codeErrorDiv = document.getElementById("project-code-group");
+    
+    if (projectName === "" || projectName === null || projectName === undefined){
+        allFieldsOK = false;
+        nameErrorDiv.style.display = "block";
+    } else { nameErrorDiv.style.display = "none"; }
+    
+    if (projectCode === "" || projectCode === null || projectCode === undefined){
+        allFieldsOK = false;
+        codeErrorDiv.style.display = "block";
+    } else { codeErrorDiv.style.display = "none"; }    
+    
+    return allFieldsOK;
 }
