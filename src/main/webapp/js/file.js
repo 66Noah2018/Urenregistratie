@@ -210,16 +210,29 @@ function showPreferences(){
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         disableFilters(true);
+        fillPreferencesFields();
     };
     xhr.send();
 }
 
+function fillPreferencesFields(){
+    const defaultWorkingDir = JSON.parse(servletRequest(SERVLET_URL + "?function=getDefaultWorkingDirectory")).defaultWorkingDirectory;
+    document.getElementById("defaultWorkingDirectory").value = defaultWorkingDir.replaceAll("\\\\", "\\");
+    document.getElementById("checkDirBtn").classList.add("success");
+}
+
+function savePreferencesChanges(){
+    showNotification("Saving", "Trying to update your default working directory...", infoBoxProperties.neutral);
+    const defaultWorkingDir = document.getElementById("defaultWorkingDirectory").value;
+    let status = JSON.parse(servletRequestPost(SERVLET_URL + "?function=setDefaultWorkingDirectory", defaultWorkingDir)).status;
+    if (status === "OK"){ 
+        showNotification("Success", "Default working directory updated", infoBoxProperties.success); 
+        document.getElementById("assignment-view").click();    
+    } else { showNotification("Something went wrong", "Please try again", infoBoxProperties.warning); }
+}
+
 function closeForm(){ document.getElementById("assignment-view").click(); }
 
-
-
-
-// update all these funcs!!
 function checkDirValidity(){
     event.preventDefault();
     let targetBtn = document.getElementById("checkDirBtn");
@@ -245,22 +258,15 @@ function checkDefaultDirValidity(){
     targetBtn.classList.remove("alert");
     let directory = document.getElementById("defaultWorkingDirectory").value;
     
-    const http = new XMLHttpRequest(); // servletrequestpost doesnt work here, loading response somehow takes too long
-    http.open("POST", "../dbvisservlet?function=directoryExists", true);
-    http.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    
-    http.onload = function(){ 
-        directoryExists = JSON.parse(http.responseText).directoryExists;
-        if (directoryExists && directory !== "") { 
-            targetBtn.classList.add("success"); 
-            document.getElementById("selected-working-dir-edit").style.visibility = 'hidden';
-        } 
-        else { 
-            targetBtn.classList.add("alert"); 
-            document.getElementById("selected-working-dir-edit").style.visibility = 'visible';
-        }
-    };
-    http.send(JSON.stringify(directory));
+    let directoryExists = JSON.parse(servletRequestPost(SERVLET_URL + "?function=directoryExists", directory)).directoryExists;
+    if (directoryExists && directory !== "") { 
+        targetBtn.classList.add("success"); 
+        document.getElementById("selected-working-dir-edit").style.display = 'none';
+    } 
+    else { 
+        targetBtn.classList.add("alert"); 
+        document.getElementById("selected-working-dir-edit").style.display = 'block';
+    }
 }
 
 function removeClassesFromDirBtn(){

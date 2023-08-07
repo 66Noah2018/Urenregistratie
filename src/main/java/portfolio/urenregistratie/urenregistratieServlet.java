@@ -180,7 +180,8 @@ public class urenregistratieServlet extends HttpServlet {
                 response.getWriter().write("{\"defaultWorkingDirectory\":\"" + ServletUtils.defaultWorkingDirectory.replace("\\", "\\\\") + "\"}");
                 break;
             case "setDefaultWorkingDirectory":
-                processChangedDefaultWorkingDirectory(request);
+                String changeStatus = processChangedDefaultWorkingDirectory(request);
+                response.getWriter().write("{\"status\":\"" + changeStatus + "\"}");
                 break;
             case "getSettings":
                 String settings = getSettings();
@@ -425,10 +426,10 @@ private String getSettings() throws IOException {
     return ServletUtils.settings;
 }
 
-private void processChangedDefaultWorkingDirectory(HttpServletRequest request) throws IOException {
+private String processChangedDefaultWorkingDirectory(HttpServletRequest request) throws IOException {
     String folder = ServletUtils.getBody(request).replace("\"", "");
     ServletUtils.defaultWorkingDirectory = folder;
-    ServletUtils.writeSettings();
+    return ServletUtils.writeSettings();
 }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

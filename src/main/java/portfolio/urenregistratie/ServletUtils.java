@@ -129,15 +129,20 @@ public class ServletUtils {
         return OSDetermined;
     }
     
-    public static void writeSettings() throws IOException {
-        String settingsString = "{";
-        settingsString += "\"prevOpened\":" + prevOpened.toPrettyString() + ",\"defaultWorkingDirectory\":";
-        if (defaultWorkingDirectory == null) { settingsString += "null}"; }
-        else {settingsString += "\"" + defaultWorkingDirectory.replace("\\", "\\\\") + "\"}"; }
-        settings = settingsString;
-        FileWriter settingsFile = new FileWriter(sourcePath + "\\" + settingsFileName); 
-        settingsFile.write(settingsString);
-        settingsFile.close();
+    public static String writeSettings() throws IOException {
+        try {
+            String settingsString = "{";
+            settingsString += "\"prevOpened\":" + prevOpened.toPrettyString() + ",\"defaultWorkingDirectory\":";
+            if (defaultWorkingDirectory == null) { settingsString += "null}"; }
+            else {settingsString += "\"" + defaultWorkingDirectory.replace("\\", "\\\\") + "\"}"; }
+            settings = settingsString;
+            FileWriter settingsFile = new FileWriter(sourcePath + "\\" + settingsFileName); 
+            settingsFile.write(settingsString);
+            settingsFile.close();
+            return "OK";
+        } catch (java.nio.file.NoSuchFileException exception) {
+            return "ERROR";
+        }
     }
     
     public static String readProjectFromFile() throws IOException{
