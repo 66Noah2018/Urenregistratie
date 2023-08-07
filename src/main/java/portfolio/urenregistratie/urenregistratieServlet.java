@@ -46,10 +46,10 @@ public class urenregistratieServlet extends HttpServlet {
         response.addHeader("Connection", "close");
         response.addHeader("Cache-Control", "no-cache, no-store");
         response.setStatus(HttpServletResponse.SC_OK);
-        if (Utils.sourcePath == null) {
+        if (ServletUtils.sourcePath == null) {
             ServletContext context = getServletContext();
             String realContext = context.getRealPath(context.getContextPath());
-            if (realContext != null) { Utils.sourcePath = realContext.split("\\\\target")[0]; }
+            if (realContext != null) { ServletUtils.sourcePath = realContext.split("\\\\target")[0]; }
         }
         switch(request.getParameter("function")){
             // getters
@@ -94,10 +94,7 @@ public class urenregistratieServlet extends HttpServlet {
                         requestedAssignments));
                 break;
             case "getSupervisors":
-                ArrayList<String> supervisors = Utils.getSupervisors(assignments);
-                String encodedSupervisors = "[";
-                for (String supervisor : supervisors) { encodedSupervisors += "\"" + supervisor + "\","; }
-                encodedSupervisors = encodedSupervisors.substring(0, encodedSupervisors.length() - 1) + "]";
+                String encodedSupervisors = ServletUtils.supervisorsToString();
                 response.getWriter().write(encodedSupervisors);
                 break;
             case "getAssignmentsWithoutDeadline":
@@ -155,14 +152,25 @@ public class urenregistratieServlet extends HttpServlet {
                 break;
             // file related requests
             case "newRegistration":
-                processNewRegistration(request);
-                response.getWriter().write("{\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                String status = processNewRegistration(request);
+                response.getWriter().write("{\"status\":\"" + status + "\"}");
                 break;
             case "editRegistrationDetails":
-                processRegistrationDetailChange(request);
+                Pair<String, String> updateResult = processRegistrationDetailChange(request);
+                if (updateResult.getValue0().equals("OK")) {
+                    ServletUtils.deleteOldRegistrationFile(updateResult.getValue1());
+                    saveRegistration(); 
+                    ServletUtils.updatePrevOpened(ServletUtils.registrationName);
+                }
+                response.getWriter().write("{\"status\":\"" + updateResult.getValue0() + "\"}");
                 break;
             case "openRegistration":
-                String registrationData = openRegistration(request);
+                String openRegistrationResult = openRegistration(request);
+                if (openRegistrationResult.equals("File opened successfully")){
+                    response.getWriter().write("{\"status\":\"" + openRegistrationResult + "\",\"projects\":" + JSONEncoder.encodeProjects(projects) + ",\"assignments\":" + JSONEncoder.encodeAssignments(Utils.sortAssignmentsByDeadline(assignments)) + "}");
+                } else {
+                    response.getWriter().write("{\"status\":\"" + openRegistrationResult + "\"}");
+                }                
                 break;
             case "saveRegistration":
                 saveRegistration();
@@ -190,6 +198,9 @@ public class urenregistratieServlet extends HttpServlet {
                 ServletUtils.loadSettings();
                 String prevOpenedString = ServletUtils.prevOpened.toString();
                 response.getWriter().write(prevOpenedString);
+                break;
+            case "getRegistrationName":
+                response.getWriter().write("{\"registrationName\":\"" + ServletUtils.registrationName + "\"}");
                 break;
             default:
                 break;
@@ -344,7 +355,7 @@ private void deleteProject (HttpServletRequest request){
     }
 }
 
-private void processNewRegistration(HttpServletRequest request) throws IOException {
+private String processNewRegistration(HttpServletRequest request) throws IOException {
     String requestBody = ServletUtils.getBody(request);
     requestBody = requestBody.substring(1, requestBody.length() - 1);
     Pattern newRegistrationPattern = Pattern.compile("\"registrationName\":\"(.*)\",\"workingDir\":\"(.*)\"");
@@ -356,27 +367,35 @@ private void processNewRegistration(HttpServletRequest request) throws IOExcepti
         ServletUtils.registrationName = newRegistrationMatcher.group(1);
         String workingDirStr = newRegistrationMatcher.group(2);
         ServletUtils.workingDir = Paths.get(workingDirStr);
+        ServletUtils.currentPath = workingDirStr;
         
-        String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + workingDirStr.replace("\\", "\\\\") + "\",\"projects\":[],\"assignments\":[]}";
+        String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + workingDirStr + "\",\"projects\":[],\"assignments\":[]}";
 
         String fileLocation = ServletUtils.workingDir + "\\" + ServletUtils.registrationName + ".json";
+        ServletUtils.updatePrevOpened(ServletUtils.registrationName);
 
         FileWriter file = new FileWriter(fileLocation);
         file.write(body);
         file.close();
+        return "OK";
     } 
+    return "ERROR";
 }
 
-private void processRegistrationDetailChange(HttpServletRequest request) throws IOException {
+private Pair<String, String> processRegistrationDetailChange(HttpServletRequest request) throws IOException {
     String requestBody = ServletUtils.getBody(request);
     requestBody = requestBody.substring(1, requestBody.length() - 1);
     Pattern detailChangePattern = Pattern.compile("\"registrationName\":\"(.*)\",\"workingDir\":\"(.*)\"");
     Matcher detailChangeMatcher = detailChangePattern.matcher(requestBody);
     Boolean detailChangeMatchFound = detailChangeMatcher.find();
+    String oldName = ServletUtils.registrationName;
     if (detailChangeMatchFound){
         ServletUtils.registrationName = detailChangeMatcher.group(1);
         ServletUtils.workingDir = Paths.get(detailChangeMatcher.group(2));
+        ServletUtils.currentPath = detailChangeMatcher.group(2) + "\\" + ServletUtils.registrationName + ".json";
+        return new Pair<>("OK", oldName);
     }
+    return new Pair<>("ERROR", oldName);
 }
 
 private String openRegistration(HttpServletRequest request) throws IOException {

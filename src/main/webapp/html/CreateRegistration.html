@@ -1,0 +1,27 @@
+<div>
+    <button class="image-button close-form-button" onclick="closeForm()">
+        <span class="mif-cross-light icon"></span>
+        <span class="caption">Close form</span>
+    </button>
+    <button class="image-button form-save-button" onclick="createRegistration()">
+        <span class="mif-floppy-disk icon"></span>
+        <span class="caption">Create registration</span>
+    </button>
+    <h2 class="form-title">Registration properties</h2>
+    <div id="edit-properties">
+        <div>
+            <p class="form-header">Registration name</p>
+            <input type="text" class="metro-input" data-role="input" name="name" id="name">
+        </div>
+        <div class="form-group error" id="name-group">Please enter a name for this registration</div>
+        <br>
+        <div>
+            <p class="form-header">Working directory</p>
+            <div class="working-dir-form-group">
+                <input type="text" data-role="input" name="workingDirectory" id="workingDirectory" onchange="removeClassesFromDirBtn()">
+                <button class="button dir-validity-btn" id="checkDirBtn" onclick="checkDirValidity()">Check directory</button>
+            </div>
+        </div>
+        <div class="form-group error" id="working-dir-group">Please check the working directory, it might be incorrect or unchecked</div>
+    </div>
+</div>

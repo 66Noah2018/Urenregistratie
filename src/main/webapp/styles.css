@@ -176,7 +176,7 @@ input, .input, .textarea, select, .select{
     width: 900px !important;
 }
 
-.delete-timeslot-dialog, .delete-assignment-dialog, .delete-project-dialog{
+.delete-timeslot-dialog, .delete-assignment-dialog, .delete-project-dialog, .open-registration-dialog, .create-registration-dialog, .update-registration-dialog{
     width: 480px !important;
 }
 
@@ -270,24 +270,6 @@ input, .input, .textarea, select, .select{
     padding-right: 5px;
 }
 
-.strikethrough {
-    position: relative;
-}
-.strikethrough:before {
-    position: absolute;
-    content: "";
-    left: 0;
-    top: 50%;
-    right: 0;
-    border-top: 1px solid;
-    border-color: inherit;
-    -webkit-transform:rotate(-5deg);
-    -moz-transform:rotate(-5deg);
-    -ms-transform:rotate(-5deg);
-    -o-transform:rotate(-5deg);
-    transform:rotate(-5deg);
-}
-
 .edit-notify{
     background-color: orange;
 }
@@ -295,4 +277,46 @@ input, .input, .textarea, select, .select{
 .save-success {
     background-color: #60a917;
     color: white;
+}
+
+.save-trying{
+    background-color: snow;
+}
+
+#open-registration-load, #create-registration-load, #update-registration-load {
+    display: none;
+}
+
+.working-dir-form-group{
+    display: flex;
+}
+
+.dir-validity-btn{
+    margin-left: 10px;
+}
+
+.close-form-button{
+    float: right;
+    margin-right: 10px;
+}
+
+#close-open-registation-form-btn{
+    margin-top: 10px;
+}
+
+.file{
+    max-width: 70vh;
+    width: 441px;
+}
+
+.file .mif-folder{
+    margin-top: 8px;
+}
+
+#open-project{
+    margin-left: 10px;
+}
+
+.recently-opened{
+    margin-left: 0px !important;
 }

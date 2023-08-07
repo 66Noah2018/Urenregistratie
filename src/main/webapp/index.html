@@ -102,13 +102,13 @@
         <aside class="sidebar" id="sidebar-index" data-role="sidebar" data-toggle="#sidebar-toggle">
             <ul class="sidebar-menu">
                 <li class="group-title">New</li>
-                <li><a href="./html/create-registration.html"><span class="mif-file-empty icon"></span>New Registration</a></li>
-                <li><a href="./html/open-registration.html"><span class="mif-folder-open icon"></span>Open Registration</a></li>
+                <li onclick="showNewRegistrationForm()"><a><span class="mif-file-empty icon"></span>New Registration</a></li>
+                <li onclick="showOpenRegistrationForm()"><a><span class="mif-folder-open icon"></span>Open Registration</a></li>
                 <li class="group-title">Registration Options</li>
-                <li><a href="#" onclick="saveRegistration()"><span class="mif-floppy-disk icon"></span>Save Registration</a></li>
-                <li><a href="./html/registration-properties.html"><span class="mif-description icon"></span>Edit Registration Properties</a></li>
+                <li onclick="saveRegistration()"><a><span class="mif-floppy-disk icon"></span>Save Registration</a></li>
+                <li onclick="showRegistrationProperties()"><a><span class="mif-description icon"></span>Edit Registration Properties</a></li>
                 <li class="group-title">Settings</li>
-                <li><a href="./html/preferences.html"><span class="mif-cogs icon"></span>Preferences</a></li>
+                <li onclick="showPreferences()"><a><span class="mif-cogs icon"></span>Preferences</a></li>
             </ul>
         </aside>
         <div id="content"></div>

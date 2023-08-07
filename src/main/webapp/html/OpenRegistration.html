@@ -1,0 +1,10 @@
+<button class="image-button close-form-button" id="close-open-registation-form-btn" onclick="closeForm()">
+    <span class="mif-cross-light icon"></span>
+    <span class="caption">Close form</span>
+</button>
+<div id="open-project">
+    <h2 class="open-registration">Open Registration</h2>
+    <input type="file" data-role="file" accept=".json" data-prepend="Open Registration" data-button-title="<span class='mif-folder'></span>" onchange="openRegistration()" id="openRegistrationFileUpload">
+    <p class="form-header recently-opened">Recently Opened Registrations</p>
+    <div id="prevOpenedList"></div>
+</div>

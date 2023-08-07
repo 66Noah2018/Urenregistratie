@@ -351,12 +351,8 @@ public class AssignmentTest {
     @Test
     public void testUpdateHoursWorked(){
         testTimeSlot2.setEndTime(time5);
-        unorderedTimeSlotList = new ArrayList<TimeSlot>();
-        unorderedTimeSlotList.add(testTimeSlot1);
-        unorderedTimeSlotList.add(testTimeSlot2);
-        unorderedTimeSlotList.add(testTimeSlot3);
         testAssignment2.updateHoursWorked(testTimeSlot2);
-        assertArrayEquals(unorderedTimeSlotList.toArray(), testAssignment2.getHoursWorked().toArray());
+        assertArrayEquals(orderedTimeSlotList.toArray(), testAssignment2.getHoursWorked().toArray());
     }
     
 }

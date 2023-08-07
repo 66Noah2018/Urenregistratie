@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +28,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.maven.surefire.shade.booter.org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.javatuples.Triplet;
+import static portfolio.urenregistratie.urenregistratieServlet.assignments;
 
 /**
  *
@@ -42,7 +45,7 @@ public class ServletUtils {
     public static Path workingDir = null;
     public static String currentPath = "";
     public final static String[] extensions = new String[]{"json"};
-    public static String registrationName;
+    public static String registrationName = null;
     
     public static String getBody(HttpServletRequest request) throws IOException {
         String body = null;
@@ -93,7 +96,6 @@ public class ServletUtils {
                 determineOS();
             }
             String fileLocation = sourcePath + "\\" + settingsFileName;
-//            System.out.println(fileLocation);
             Path path = Paths.get(fileLocation);
             if (Files.exists(path)) {
                 settings = new String(Files.readAllBytes(path));
@@ -186,9 +188,14 @@ public class ServletUtils {
             fileName = fileName.replace("\\\\", "\\");
             fileName = fileName.substring(1, fileName.length()-1); }
         if (fileName.startsWith(rootPath)) { // fully specified path
-            registration = new String(Files.readAllBytes(Paths.get(fileName)));
-            if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, not DBVis"); }
-            currentPath = fileName;
+            try{
+                registration = new String(Files.readAllBytes(Paths.get(fileName)));
+            } catch(java.nio.file.NoSuchFileException exception){
+                return new Triplet<>("", "", "Invalid file, path does not exist");
+            }
+            
+            if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, not Urenregistratie"); }
+            currentPath = Paths.get(fileName).toString();
             fileName = Paths.get(fileName).getFileName().toString();
             
         } else { //find file and read
@@ -203,7 +210,7 @@ public class ServletUtils {
             }
             if (pathToFile == null) {
                 if (defaultWorkingDirectory == null) { loadSettings(); }
-                if (defaultWorkingDirectory != null) {
+                if (defaultWorkingDirectory != null && !defaultWorkingDirectory.equals("null")) {
                     Iterator<File> fileIterator = FileUtils.iterateFiles(new File(defaultWorkingDirectory), extensions, true);
                     while (fileIterator.hasNext() && pathToFile == null) {
                         File file = fileIterator.next();
@@ -235,6 +242,41 @@ public class ServletUtils {
             encodedProjects = openRegistrationMatcher.group(3);
         } else { return new Triplet<>("", "", "Invalid file, possible file corruption"); }
         
+        updatePrevOpened(fileName);
         return new Triplet<>(encodedAssignments, encodedProjects, "File opened successfully");
+    }
+
+    public static void updatePrevOpened(String fileName) throws IOException{
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode newPrevOpened = new ObjectMapper().createArrayNode();
+        for (int i = 0; i < prevOpened.size(); i++){
+            String prevOpenedFileName = prevOpened.get(i).get("fileName").toString().replaceAll("\"", "");
+            if (!prevOpenedFileName.equals(fileName)) {
+                newPrevOpened.insert(i, prevOpened.get(i));
+            }
+        }
+
+        ObjectNode projectFile = mapper.createObjectNode();
+        projectFile.put("fileName", fileName);
+        projectFile.put("path", currentPath.replace("\\\\", "\\"));
+        projectFile.put("date", new Date().toString());
+        newPrevOpened.insert(0, projectFile);
+        if (newPrevOpened.size() > 5) { newPrevOpened.remove(5); }
+        prevOpened = newPrevOpened;
+        writeSettings();
+    }
+
+    public static String supervisorsToString() {
+        ArrayList<String> supervisors = Utils.getSupervisors(assignments);
+        if (supervisors.isEmpty()) { return "[]"; }
+        String encodedSupervisors = "[";
+        for (String supervisor : supervisors) { encodedSupervisors += "\"" + supervisor + "\","; }
+        encodedSupervisors = encodedSupervisors.substring(0, encodedSupervisors.length() - 1) + "]";
+        return encodedSupervisors;
+    }
+
+    static void deleteOldRegistrationFile(String oldFileName) throws IOException {
+        Path fileToDelete = Paths.get(ServletUtils.workingDir + "\\" + oldFileName + ".json");
+        Files.delete(fileToDelete);
     }
 }

@@ -30,14 +30,14 @@ function getAllProjectNames(){
 }
 
 function getProjectName(projectId){
-    if (projectId === "null") { return "Self-assigned"; }
+    if (projectId === "null") { return "No project"; }
     for (const project of projects){
         if (project.projectId === projectId) { return project.projectName; }
     }
 }
 
 function getProjectIdByName(projectName){
-    if (projectName === "self-assigned") { return "null"; }
+    if (projectName === "no-project") { return "null"; }
     for (const project of projects){
         if (project.projectName === projectName) { return project.projectId; }
     }

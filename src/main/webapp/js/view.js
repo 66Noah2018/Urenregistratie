@@ -7,21 +7,44 @@ let projects = null;
 let assignments = null;
 const SERVLET_URL = "/Urenregistratie/urenregistratieServlet";
 let timeSlotsPerDate = {};
+let projectOpen = false;
 
 const infoBoxProperties = {
     warning: {animation: 'easeOutBounce', cls: "edit-notify"},
     warningKeepOpen: {animation: 'easeOutBounce', cls: "edit-notify", keepOpen: true},
-    success: {animation: 'easeOutBounce', cls: "save-success"}
+    success: {animation: 'easeOutBounce', cls: "save-success"},
+    neutral: {animation: 'easeOutBounce', cls: "save-trying"}
 };
 
-function loadData(){
-    let result = JSON.parse(servletRequest(SERVLET_URL + "?function=getState"));
-    if (result !== null) {
-        projects = result.projects;
-        assignments = result.assignments;
-        assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", "[NOT_STARTED, STARTED, INSUFFICIENT_INFORMATION]"));
+function removeAllNotifications(){
+    const notifications = document.getElementsByClassName("notify");
+    for (let notification of notifications) { notification.click(); }
+}
+
+function updatePageTitle(){
+    const result = JSON.parse(servletRequest(SERVLET_URL + "?function=getRegistrationName")).registrationName;
+    let registrationName = (result === "null")? null : result;
+    projectOpen = (registrationName !== null);
+    if (projectOpen) { document.title = "Urenregistratie - " + registrationName;
+    } else { 
+        disableRibbonMenu();
+        document.title = "Urenregistratie"; 
     }
-    document.getElementById("assignment-view").click();
+}
+
+function loadData(){
+    updatePageTitle();
+    if (projectOpen){
+        let result = JSON.parse(servletRequest(SERVLET_URL + "?function=getState"));
+        if (result !== null) {
+            projects = result.projects;
+            assignments = result.assignments;
+            assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", "[NOT_STARTED, STARTED, INSUFFICIENT_INFORMATION]"));
+        }
+        document.getElementById("assignment-view").click();
+    } else {
+        showNotification("Please open or create a project", "No project", infoBoxProperties.warningKeepOpen);
+    }
 }
 
 function removeViewSelections(){
@@ -53,6 +76,11 @@ function showNotification(title, content, notificationClass){
     Metro.notify.create(content, title, notificationClass);
 }
 
+function disableRibbonMenu(enable = false){
+    if (!enable) { $(".content-holder").attr("disabled", "true"); }
+    else { $(".content-holder").attr("disabled", "false"); }
+}
+
 // assignment view
 function showAssignmentView(){
     var xhr= new XMLHttpRequest();
@@ -63,6 +91,7 @@ function showAssignmentView(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
+        updatePageTitle();
         disableFilters(true);
         processAssignments();
     };

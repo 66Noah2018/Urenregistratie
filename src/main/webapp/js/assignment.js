@@ -77,7 +77,7 @@ function saveNewAssignment(){
 
 function fillProjectSelectBox(){
    let selectBoxDiv = document.getElementById("corresponding-project-select");
-   let selectBoxCode = '<select data-role="select" id="corresponding-project-selectbox"><option value="self-assigned">Self-assigned</option>';
+   let selectBoxCode = '<select data-role="select" id="corresponding-project-selectbox"><option value="no-project">No project</option>';
    let projectNames = getAllProjectNames();
    projectNames.forEach(projectName => {
        selectBoxCode += `<option value="${projectName}">${projectName}</option>`;
@@ -108,7 +108,7 @@ function fillAssignmentDetailsFields(assignmentId){
     document.getElementById("assignment-name").value = assignmentToDisplay.assignmentName;
     document.getElementById("assignment-details").value = assignmentToDisplay.assignmentDetails;
     document.getElementById("assignment-supervisor").value = assignmentToDisplay.supervisor;
-    if (assignmentToDisplay.correspondingProjectId === "null") { document.getElementById("corresponding-project-selectbox").value = "self-assigned"; }
+    if (assignmentToDisplay.correspondingProjectId === "null") { document.getElementById("corresponding-project-selectbox").value = "no-project"; }
     else { document.getElementById("corresponding-project-selectbox").value = getProjectName(assignmentToDisplay.correspondingProjectId); }
     document.getElementById("assignment-deadline").value = assignmentToDisplay.deadline.split(" ")[0];
     document.getElementById("assignment-state-selectbox").value = assignmentToDisplay.assignmentState;
