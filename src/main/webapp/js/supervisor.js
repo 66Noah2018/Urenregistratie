@@ -9,7 +9,7 @@ function showAssignmentsForSupervisor(supervisor){
     let list = `<div class="no-assignments">No assignments for this supervisor</div>`;
     if (assignmentsForSupervisor !== null && assignmentsForSupervisor.length > 0){
         list = '<ul class="items-list" id="assignment-list" data-role="list" data-show-search="true"></li>';
-        for (let assignment of assignments) { list += supervisorAssignmentToListItem(assignment); }
+        for (let assignment of assignmentsForSupervisor) { list += supervisorAssignmentToListItem(assignment); }
         list += "</ul>";
     }
     document.getElementById("supervisor-assignment-list").innerHTML = list;

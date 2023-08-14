@@ -104,6 +104,7 @@ input, .input, .textarea, select, .select{
 
 #assignment-overview, #project-overview, #supervisors-overview{
     width: 504px;
+    max-width: 504px;
     float: left;
     height: fit-content;
     max-height: calc(100vh - 127px - 48px - 4px);
