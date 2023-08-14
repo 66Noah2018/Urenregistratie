@@ -72,6 +72,10 @@ function disableFilters(enable = false){
     }
 }
 
+function disableExport(enable = false){
+    document.getElementById("export-hours-worked-btn").disabled = !enable;
+}
+
 function showNotification(title, content, notificationClass){
     Metro.notify.create(content, title, notificationClass);
 }
@@ -93,6 +97,7 @@ function showAssignmentView(){
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         updatePageTitle();
         disableFilters(true);
+        disableExport();
         processAssignments();
     };
     xhr.send();
@@ -102,7 +107,7 @@ function assignmentToListItem(assignment){
     let html = `<li id="${assignment.assignmentId}" onclick="showAssignmentDetails('${assignment.assignmentId}')">
         <span class="label">${assignment.assignmentName}</span>
         <span class="second-label">${getProjectName(assignment.correspondingProjectId)}</span>`;
-    if (assignment.assignmentState !== "FINISHED" && assignment.deadline !== null) {
+    if (assignment.assignmentState !== "FINISHED" && assignment.deadline !== null && assignment.deadline !== "null") {
         const re = /(.*?)-(.*?)-(.*?) (.*?):(.*?):(.*)/gm;
         deadlineArray = re.exec(assignment.deadline);
         const deadlineDate = new Date(deadlineArray[3], deadlineArray[2] - 1, deadlineArray[1], deadlineArray[4], deadlineArray[5], deadlineArray[6], 0);
@@ -140,6 +145,7 @@ function showProjectView(){
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         disableFilters();
+        disableExport();
         processProjects();
     };
     xhr.send();
@@ -174,6 +180,7 @@ function showSupervisorView(){
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         disableFilters();
+        disableExport();
         processSupervisors();
     };
     xhr.send();
@@ -209,6 +216,7 @@ function showHoursWorkedView(){
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         disableFilters();
+        disableExport(true);
         const currentDate = new Date();
         const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
         const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
@@ -233,7 +241,7 @@ function processHoursWorkedForHoursWorkedView(month, year, unwrittenOnly = false
 
 function processHoursWorkedProject(project, month, year){
     let hours = JSON.parse(servletRequest(SERVLET_URL + "?function=getHoursByProjectId&projectId=" + project.projectId));
-    let box = `<div class="hours-box" id="${project.projectId}"><p class="hours-box-header">${project.projectName}</p>`;
+    let box = `<div class="hours-box" id="${project.projectId}"><p class="hours-box-header">${project.projectName}</p><p class="hours-box-subheader">${project.projectCode}</p>`;
     if (hours === null || hours.length === 0) { box += "<div class='no-hours-for-project'>No hours for this project</div>"; }
     else{
         box += `<button class="button success outline mark-all-as-written-switch" onclick="markAllAsWritten('${project.projectId}')" id="hours-written-switch-${project.projectId}">Mark all hours as written</button>
@@ -280,7 +288,7 @@ function updateHoursWorkedView(){
 
 function processUnwrittenHoursProject(project, month, year){
     let hours = JSON.parse(servletRequest(SERVLET_URL + "?function=getUnwrittenHoursByProjectId&projectId=" + project.projectId));
-    let box = `<div class="hours-box" id="${project.projectId}"><p class="hours-box-header">${project.projectName}</p>`;
+    let box = `<div class="hours-box" id="${project.projectId}"><p class="hours-box-header">${project.projectName}</p><p class="hours-box-subheader">${project.projectCode}</p>`;
     if (hours === null || hours.length === 0) { box += "<div class='no-hours-for-project'>No unwritten hours for this project</div>"; }
     else {
         box += `<button class="button success outline mark-all-as-written-switch" onclick="markAllAsWritten('${project.projectId}')" id="hours-written-switch-${project.projectId}">Mark all hours as written</button><table class="table .row-hover" id="hours-worked-table">

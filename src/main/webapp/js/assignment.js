@@ -16,6 +16,7 @@ function createNewAssignment(){
         htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         disableFilters();
+        disableExport();
         fillProjectSelectBox();
     };
     xhr.send();
@@ -59,6 +60,7 @@ function saveNewAssignment(){
     const correspondingProjectName = document.getElementById("corresponding-project-selectbox").value;
     const correspondingProjectId = getProjectIdByName(correspondingProjectName);
     const assignmentDeadline = document.getElementById("assignment-deadline").value;
+    const assignmentDeadlineFull = (assignmentDeadline === "" || assignmentDeadline === null) ? "null" : (assignmentDeadline + " 00:00:00");
     const formValidationPassed = validateAssignmentForm();
     if (formValidationPassed){
         const result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=addAssignment", {
@@ -66,7 +68,7 @@ function saveNewAssignment(){
             "assignmentDetails": assignmentDetails,
             "supervisor": assignmentSupervisor,
             "correspondingProjectId": correspondingProjectId,
-            "deadline": assignmentDeadline + " 00:00:00"
+            "deadline": assignmentDeadlineFull
         }));
         assignments = result.assignments;
         projects = result.projects;
@@ -110,7 +112,7 @@ function fillAssignmentDetailsFields(assignmentId){
     document.getElementById("assignment-supervisor").value = assignmentToDisplay.supervisor;
     if (assignmentToDisplay.correspondingProjectId === "null") { document.getElementById("corresponding-project-selectbox").value = "no-project"; }
     else { document.getElementById("corresponding-project-selectbox").value = getProjectName(assignmentToDisplay.correspondingProjectId); }
-    document.getElementById("assignment-deadline").value = assignmentToDisplay.deadline.split(" ")[0];
+    if (assignmentToDisplay.deadline !== "null" && assignmentToDisplay.deadline !== null) { document.getElementById("assignment-deadline").value = assignmentToDisplay.deadline.split(" ")[0]; }
     document.getElementById("assignment-state-selectbox").value = assignmentToDisplay.assignmentState;
     processHoursWorked(assignmentToDisplay.hoursWorked);
 }
@@ -360,6 +362,8 @@ function saveUpdatedAssignment(){
     const formValidationPassed = validateAssignmentForm();
     if (formValidationPassed){
         let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
+        let assignmentDeadline = document.getElementById("assignment-deadline").value;
+        const assignmentDeadlineFull = (assignmentDeadline === "" || assignmentDeadline === null) ? "null" : (assignmentDeadline + " 00:00:00");
         let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateAssignment", {
             "assignmentId": selectedAssignmentId,
             "assignmentName": document.getElementById("assignment-name").value,
@@ -368,7 +372,7 @@ function saveUpdatedAssignment(){
             "correspondingProjectId": getProjectIdByName(document.getElementById("corresponding-project-selectbox").value),
             "hoursWorked": assignmentToDisplay.hoursWorked,
             "assignmentState": document.getElementById("assignment-state-selectbox").value,
-            "deadline": document.getElementById("assignment-deadline").value + " 00:00:00"
+            "deadline": assignmentDeadlineFull
         }));
         assignments = result.assignments;
         projects = result.projects;

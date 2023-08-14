@@ -16,6 +16,7 @@ function createNewProject() {
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
         disableFilters();
+        disableExport();
     };
     xhr.send();
 }
@@ -93,7 +94,7 @@ function projectAssignmentToListItem(assignment){
     let html = `<li id="${assignment.assignmentId}" onclick="showProjectAssignmentDetails('${assignment.assignmentId}')">
         <span class="label">${assignment.assignmentName}</span>
         <span class="second-label">${getProjectName(assignment.correspondingProjectId)}</span>`;
-    if (assignment.assignmentState !== "FINISHED" && assignment.deadline !== null) {
+    if (assignment.assignmentState !== "FINISHED" && assignment.deadline !== null && assignment.deadline !== "null" & assignment.deadline !== "") {
         const re = /(.*?)-(.*?)-(.*?) (.*?):(.*?):(.*)/gm;
         deadlineArray = re.exec(assignment.deadline);
         const deadlineDate = new Date(deadlineArray[3], deadlineArray[2] - 1, deadlineArray[1], deadlineArray[4], deadlineArray[5], deadlineArray[6], 0);

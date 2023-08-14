@@ -173,7 +173,8 @@ public class urenregistratieServlet extends HttpServlet {
                 }                
                 break;
             case "saveRegistration":
-                saveRegistration();
+                String saveStatus = saveRegistration();
+                response.getWriter().write("{\"status\":\"" + saveStatus + "\"}");
                 break;
             case "getDefaultWorkingDirectory":
                 if (ServletUtils.defaultWorkingDirectory == null) { ServletUtils.loadSettings(); }
@@ -408,17 +409,20 @@ private String openRegistration(HttpServletRequest request) throws IOException {
     return result.getValue2();
 }
 
-private void saveRegistration() throws IOException {
-    String encodedProjects = JSONEncoder.encodeProjects(projects);
-    String encodedAssignments = JSONEncoder.encodeAssignments(assignments);
-    
-    String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + ServletUtils.workingDir.toString().replace("\\", "\\\\") + "\",\"projects\":" + encodedProjects + ",\"assignments\":" + encodedAssignments + "}";
+private String saveRegistration() throws IOException {
+    try{
+        String encodedProjects = JSONEncoder.encodeProjects(projects);
+        String encodedAssignments = JSONEncoder.encodeAssignments(assignments);
 
-    String fileLocation = ServletUtils.workingDir + "\\" + ServletUtils.registrationName + ".json";
+        String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + ServletUtils.workingDir.toString().replace("\\", "\\\\") + "\",\"projects\":" + encodedProjects + ",\"assignments\":" + encodedAssignments + "}";
 
-    FileWriter file = new FileWriter(fileLocation);
-    file.write(body);
-    file.close();
+        String fileLocation = ServletUtils.workingDir + "\\" + ServletUtils.registrationName + ".json";
+
+        FileWriter file = new FileWriter(fileLocation);
+        file.write(body);
+        file.close();
+        return "OK";
+    } catch (Exception exception) { return "ERROR"; }
 }
 
 private String getSettings() throws IOException {

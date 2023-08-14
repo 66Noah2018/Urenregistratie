@@ -160,19 +160,19 @@ public class ServletUtils {
     }
     
     public static Boolean checkFileValidity(String projectString) throws JsonProcessingException{
-        return true;
-        // todo: implement
-//        if (projectString.startsWith("\"")) { projectString = projectString.substring(1, projectString.length()); }
-//        ObjectMapper mapper = new ObjectMapper();
-//        JsonNode project = mapper.readTree(projectString);
-//        // check whether file was created by this program and contains the correct 'keys'
-//        JsonNode projectName = project.get("title");
-//        JsonNode workingDir = project.get("workingDir");
-//        JsonNode database = project.get("databaseFileName");
-//        JsonNode groups = project.get("groups");
-//        
-//        if (projectName == null || workingDir == null || database == null || groups == null) { return false; }
-//        return true;
+        try{
+            if (projectString.startsWith("\"")) { projectString = projectString.substring(1, projectString.length()); }
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode project = mapper.readTree(projectString);
+            // check whether file was created by this program and contains the correct 'keys'
+            JsonNode registrationNameNode = project.get("registrationName");
+            JsonNode workingDirNode = project.get("workingDir");
+            JsonNode projectsNode = project.get("projects");
+            JsonNode assignmentsNode = project.get("assignments");
+            
+            if (registrationNameNode == null || workingDirNode == null || projectsNode == null || assignmentsNode == null) { return false; }
+            return true;
+        } catch (Exception exception) { System.out.println("exception"); return false; }
      }
     
     public static Boolean directoryExists(HttpServletRequest request) throws IOException {
@@ -198,8 +198,8 @@ public class ServletUtils {
             } catch(java.nio.file.NoSuchFileException exception){
                 return new Triplet<>("", "", "Invalid file, path does not exist");
             }
-            
-            if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, not Urenregistratie"); }
+
+            if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, file format incorrect"); }
             currentPath = Paths.get(fileName).toString();
             fileName = Paths.get(fileName).getFileName().toString();
             

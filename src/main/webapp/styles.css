@@ -98,6 +98,8 @@ input, .input, .textarea, select, .select{
 
 #content{
     height: calc(100vh - 127px);
+    overflow-y: auto;
+    overflow-x: clip;
 }
 
 #assignment-overview, #project-overview, #supervisors-overview{
@@ -201,9 +203,21 @@ input, .input, .textarea, select, .select{
     margin-bottom: 10px;
 }
 
+.hours-box button{
+    margin-top: 5px;
+}
+
 .hours-box-header{
     text-align: center;
     font-size: larger;
+}
+
+.hours-box-subheader{
+    text-align: center;
+    font-size: small;
+    margin-top: -10px;
+    font-style: italic;
+    border-bottom: 1px lightgray solid;
 }
 
 .no-hours-for-project{
@@ -319,4 +333,54 @@ input, .input, .textarea, select, .select{
 
 .recently-opened{
     margin-left: 0px !important;
+}
+
+#hours-worked-pdf{
+    border: 2px solid lightgray;
+    width: 100vw;
+    min-width: 100vw;
+}
+
+.project-assignments-header-pdf {
+    font-size: x-large;
+    text-decoration: underline;
+    margin-left: 10px;  
+}
+
+.project-assignments-subheader-pdf {
+    font-size: small;
+    font-style: italic;
+    margin-top: -5px;
+    margin-left: 10px;  
+}
+
+.pdf-assignment-box {
+    width: 200px;
+    margin-left: 10px;
+    border: 2px lightgray solid;
+    border-radius: 5px;
+    float: left;
+    margin-bottom: 10px;
+}
+
+.pdf-assignment-header {
+    font-size: large;
+    text-align: center;
+    border-bottom: 1px lightgray solid;
+    margin-bottom: 5px;
+}
+
+#hours-worked-pdf{
+    display: grid;
+    visibility: collapse;
+}
+
+.hours-worked-header-pdf {
+    font-size: xx-large;
+    margin-left: 10px;
+    text-decoration: underline;
+}
+
+.pdf-project-assignment-box{
+    display: flow-root;
 }

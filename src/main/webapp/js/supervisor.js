@@ -9,7 +9,7 @@ function showAssignmentsForSupervisor(supervisor){
     let list = `<div class="no-assignments">No assignments for this supervisor</div>`;
     if (assignmentsForSupervisor !== null && assignmentsForSupervisor.length > 0){
         list = '<ul class="items-list" id="assignment-list" data-role="list" data-show-search="true"></li>';
-        assignmentsForSupervisor.forEach(assignment => { list += supervisorAssignmentToListItem(assignment); });
+        for (let assignment of assignments) { list += supervisorAssignmentToListItem(assignment); }
         list += "</ul>";
     }
     document.getElementById("supervisor-assignment-list").innerHTML = list;
@@ -21,14 +21,16 @@ function supervisorAssignmentToListItem(assignment){
         <span class="second-label">${getProjectName(assignment.correspondingProjectId)}</span>`;
     if (assignment.assignmentState !== "FINISHED" && assignment.deadline !== null) {
         const re = /(.*?)-(.*?)-(.*?) (.*?):(.*?):(.*)/gm;
-        deadlineArray = re.exec(assignment.deadline);
-        const deadlineDate = new Date(deadlineArray[3], deadlineArray[2] - 1, deadlineArray[1], deadlineArray[4], deadlineArray[5], deadlineArray[6], 0);
-        const currentDate = Date.now();
-        const epochWithinThreeDays = 3*24*60*60*1000;
-        const epochWithinWeek = 7*24*60*60*1000;
-        const diffNowDeadline = (deadlineDate.valueOf()) - currentDate.valueOf();
-        if (diffNowDeadline <= epochWithinThreeDays) { html += '<span class="second-action mif-alarm fg-red"></span>'; }
-        else if (diffNowDeadline <= epochWithinWeek) { html += '<span class="second-action mif-alarm"></span>'; }
+        if (assignment.deadline !== null && assignment.deadline !== "null" && assignment.deadline !== ""){
+            deadlineArray = re.exec(assignment.deadline);
+            const deadlineDate = new Date(deadlineArray[3], deadlineArray[2] - 1, deadlineArray[1], deadlineArray[4], deadlineArray[5], deadlineArray[6], 0);
+            const currentDate = Date.now();
+            const epochWithinThreeDays = 3*24*60*60*1000;
+            const epochWithinWeek = 7*24*60*60*1000;
+            const diffNowDeadline = (deadlineDate.valueOf()) - currentDate.valueOf();
+            if (diffNowDeadline <= epochWithinThreeDays) { html += '<span class="second-action mif-alarm fg-red"></span>'; }
+            else if (diffNowDeadline <= epochWithinWeek) { html += '<span class="second-action mif-alarm"></span>'; }
+        }
     }
     return html + "</li>";
 }

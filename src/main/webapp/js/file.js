@@ -46,7 +46,8 @@ function showNewRegistrationForm(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
-        disableFilters(true);
+        disableFilters();
+        disableExport();
     };
     xhr.send();
 }
@@ -61,7 +62,8 @@ function showOpenRegistrationForm(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
-        disableFilters(true);
+        disableFilters();
+        disableExport();
         showPrevOpened();
     };
     xhr.send();
@@ -154,7 +156,12 @@ function createRegistration(){
   
 }
 
-function saveRegistration(){  servletRequest(SERVLET_URL + "?function=saveRegistration"); }
+function saveRegistration(){ 
+    showNotification("Saving", "Trying to save your registration...", infoBoxProperties.neutral);
+    const saveStatus = JSON.parse(servletRequest(SERVLET_URL + "?function=saveRegistration")).status;
+    if (saveStatus === "OK"){ showNotification("Success", "Registration saved", infoBoxProperties.success); }
+    else { showNotification("Something went wrong", "Please try again", infoBoxProperties.warning); }
+}
 
 function showRegistrationProperties(){
     var xhr= new XMLHttpRequest();
@@ -165,7 +172,8 @@ function showRegistrationProperties(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
-        disableFilters(true);
+        disableFilters();
+        disableExport();
         fillFields();
     };
     xhr.send();
@@ -209,7 +217,8 @@ function showPreferences(){
         let parser = new DOMParser();
         let htmlDoc = parser.parseFromString(this.responseText,"text/html");
         document.getElementById("content").innerHTML = htmlDoc.body.innerHTML;
-        disableFilters(true);
+        disableFilters();
+        disableExport();
         fillPreferencesFields();
     };
     xhr.send();
@@ -221,14 +230,30 @@ function fillPreferencesFields(){
     document.getElementById("checkDirBtn").classList.add("success");
 }
 
+function validatePreferencesForm(){
+    const defaultWorkingDir = document.getElementById("defaultWorkingDirectory").value;
+    if (defaultWorkingDir === null || defaultWorkingDir === "null" || defaultWorkingDir === "") { 
+        document.getElementById("selected-working-dir-edit").style.display = "block";
+        return false; 
+    }
+    document.getElementById("selected-working-dir-edit").style.display = "none";
+    return true;
+}
+
 function savePreferencesChanges(){
     showNotification("Saving", "Trying to update your default working directory...", infoBoxProperties.neutral);
-    const defaultWorkingDir = document.getElementById("defaultWorkingDirectory").value;
-    let status = JSON.parse(servletRequestPost(SERVLET_URL + "?function=setDefaultWorkingDirectory", defaultWorkingDir)).status;
-    if (status === "OK"){ 
-        showNotification("Success", "Default working directory updated", infoBoxProperties.success); 
-        document.getElementById("assignment-view").click();    
-    } else { showNotification("Something went wrong", "Please try again", infoBoxProperties.warning); }
+    const validationPassed = validatePreferencesForm();
+    if (validationPassed){
+        const defaultWorkingDir = document.getElementById("defaultWorkingDirectory").value;
+        let status = JSON.parse(servletRequestPost(SERVLET_URL + "?function=setDefaultWorkingDirectory", defaultWorkingDir)).status;
+        if (status === "OK"){ 
+            showNotification("Success", "Default working directory updated", infoBoxProperties.success); 
+            document.getElementById("assignment-view").click();    
+        } else { showNotification("Something went wrong", "Please try again", infoBoxProperties.warning); }
+    } else {
+        showNotification("Form validation failed", "Please check your input", infoBoxProperties.warning);
+        return;
+    }
 }
 
 function closeForm(){ document.getElementById("assignment-view").click(); }
@@ -273,4 +298,114 @@ function removeClassesFromDirBtn(){
     let dirBtn = document.getElementById("checkDirBtn");
     dirBtn.classList.remove("error");
     dirBtn.classList.remove("success");
+}
+
+function exportHoursWorked(){
+    let boxesTarget = document.getElementById("hours-worked-boxes-pdf");
+    let assignmentTarget = document.getElementById("hours-worked-per-project-pdf");
+    if (projects !== null && projects.length > 0){
+        const currentDate = new Date();
+        const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
+        const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+        let boxes = "<p class='hours-worked-header-pdf'>Hours worked per project</p>";
+        for (let project of projects) { boxes += processHoursWorkedProjectPDF(project, month, year); }
+        boxesTarget.innerHTML = boxes;
+        
+        let lists = "<p class='hours-worked-header-pdf'>Hours worked per assignment</p>";
+        for (let project of projects){ lists += processHoursWorkedPerAssignment(project, month, year); }
+        assignmentTarget.innerHTML = lists;
+        
+        html2canvas(document.getElementById("hours-worked-pdf"),{
+            onrendered:function(canvas){
+                var img=canvas.toDataURL("image/png");
+                var doc = new jsPDF();
+                doc.addImage(img,'JPEG',20,20);
+                doc.save('test.pdf');
+                console.log("saved")
+            }
+        });
+        
+//        let pdf = new jsPDF('p', 'pt', 'letter');
+//        pdf.addHTML(document.getElementById("hours-worked-pdf"), function () {
+//            pdf.output("dataurlnewwindow");
+//            console.log("saved")
+////            pdf.save(month + "-" + year + '_export.pdf');
+//        });
+        
+
+        
+        
+//        let doc = new jsPDF();
+//        var source = window.document.getElementById("hours-worked-pdf");
+//        doc.fromHTML(
+//            source,
+//            15,
+//            15,
+//            {
+//              'width': 180
+//            });
+//
+//        doc.output("dataurlnewwindow");
+    }
+}
+
+function processHoursWorkedPerAssignment(project, month, year){
+    let assignments = JSON.parse(servletRequest(SERVLET_URL + "?function=getAssignmentsByProjectId&projectId=" + project.projectId));
+    let listContent = `<div class="pdf-project-assignment-box"><p class='project-assignments-header-pdf'>Project ${project.projectName}</p><p class='project-assignments-subheader-pdf'>${project.projectCode}</p>`;
+    for (assignment of assignments) {
+        const assignmentHoursWorked = assignment.hoursWorked;
+        const assignmentGroupedHours = groupHoursPerAssignment(assignmentHoursWorked, month, year);
+        if (Object.keys(assignmentGroupedHours).length > 0){
+            listContent += `<div class="pdf-assignment-box"><p class="pdf-assignment-header">${assignment.assignmentName}</p><table class="table" id="hours-worked-table-pdf">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Hours worked</th>
+                </tr>
+            </thead>
+            <tbody>`;
+            Object.entries(assignmentGroupedHours).forEach(([key, value]) => {
+                listContent += hourOverviewTimeslotToTableRow(key, value);
+            });
+            listContent += "</tbody></table></div>";
+        }
+    }
+    return listContent + "</div>";
+}
+
+function groupHoursPerAssignment(timeslots, month, year){
+    let groupedHours = {};
+    for (timeslot of timeslots){
+        const date = timeslot.startTime.split(" ")[0];
+        if ((date.split("-")[1] === month) && (date.split("-")[2] === year)){
+            const startDate = new Date('August 19, 1975 ' + timeslot.startTime.split(" ")[1]);
+            const endDate = new Date('August 19, 1975 ' + timeslot.endTime.split(" ")[1]);
+            const diffEpoch = endDate - startDate;
+            if (groupedHours.hasOwnProperty(date)) { groupedHours[date] = groupedHours[date] + diffEpoch; }
+            else { groupedHours[date] = diffEpoch; }
+        }
+    }
+    return groupedHours;
+}
+
+function processHoursWorkedProjectPDF(project, month, year){
+    let hours = JSON.parse(servletRequest(SERVLET_URL + "?function=getHoursByProjectId&projectId=" + project.projectId));
+    let box = `<div class="hours-box" id="PDF-${project.projectId}"><p class="hours-box-header">${project.projectName}</p><p class="hours-box-subheader">${project.projectCode}</p>`;
+    if (hours === null || hours.length === 0) { box += "<div class='no-hours-for-project'>No hours for this project</div>"; }
+    else{
+        box += `<table class="table" id="hours-worked-table-pdf">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Hours worked</th>
+                </tr>
+            </thead>
+            <tbody>`;
+        let hoursGrouped = groupHours(project.projectId, hours, month, year);
+        Object.entries(hoursGrouped).forEach(([key, value]) => {
+            box += hourOverviewTimeslotToTableRow(key, value);
+        });
+        box += "</tbody></table>";
+    }
+    return box += "</div>";
 }
