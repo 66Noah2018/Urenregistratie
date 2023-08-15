@@ -234,7 +234,7 @@ function processHoursWorkedForHoursWorkedView(month, year, unwrittenOnly = false
             if (unwrittenOnly) { boxes += processUnwrittenHoursProject(project, month, year); }
             else { boxes += processHoursWorkedProject(project, month, year); }
         }
-        if (showNoProjectHours){
+        if (!showNoProjectHours){
             if (unwrittenOnly) { boxes += processUnwrittenHoursProject({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year); }
             else { boxes += processHoursWorkedProject({"projectId": null, "projectName":"No project", "projectCode":"-" }, month, year); }
         }
