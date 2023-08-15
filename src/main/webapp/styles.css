@@ -227,34 +227,34 @@ input, .input, .textarea, select, .select{
     margin-left: 10px;
 }
 
-.mark-all-as-written-switch, .show-only-unwritten-switch{
+.mark-all-as-written-switch, .show-only-unwritten-switch, .show-no-project-switch{
     float: right;
     margin-right: 10px;
 }
 
-.show-only-unwritten-switch{
+.show-only-unwritten-switch, .show-no-project-switch{
     margin-top: 10px;
 }
 
-.mark-all-as-written-switch caption, .show-only-unwritten-switch caption{
+.mark-all-as-written-switch caption, .show-only-unwritten-switch caption, .show-no-project-switch caption{
     font-size: small;
 }
 
-.mark-all-as-written-switch .check::after, .show-only-unwritten-switch .check::after{
+.mark-all-as-written-switch .check::after, .show-only-unwritten-switch .check::after, .show-no-project-switch .check::after{
     background: #60a917 !important;
     border-color: #adeb6e !important;
 }
 
-.mark-all-as-written-switch input[type="checkbox"]:checked ~ .check, .show-only-unwritten-switch input[type="checkbox"]:checked ~ .check{
+.mark-all-as-written-switch input[type="checkbox"]:checked ~ .check, .show-only-unwritten-switch input[type="checkbox"]:checked ~ .check, .show-no-project-switch input[type="checkbox"]:checked ~ .check{
     background: #60a917 !important;
 }
 
-.mark-all-as-written-switch input[type="checkbox"]:checked ~ .check::after, .show-only-unwritten-switch input[type="checkbox"]:checked ~ .check::after{
+.mark-all-as-written-switch input[type="checkbox"]:checked ~ .check::after, .show-only-unwritten-switch input[type="checkbox"]:checked ~ .check::after, .show-no-project-switch input[type="checkbox"]:checked ~ .check::after{
     border-color: #ffffff !important;
     background: #ffffff !important;
 }
 
-.mark-all-as-written-switch .check, .show-only-unwritten-switch .check {
+.mark-all-as-written-switch .check, .show-only-unwritten-switch .check, .show-no-project-switch .check {
     border-radius: 10px;
 }
 

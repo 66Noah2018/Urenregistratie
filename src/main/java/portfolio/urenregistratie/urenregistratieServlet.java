@@ -211,7 +211,7 @@ public class urenregistratieServlet extends HttpServlet {
     }
     
 private String getHoursGrouped(){
-    HashMap<String, ArrayList<TimeSlot>> groupedHours = Utils.getUnwrittenHoursGroupedByProject(assignments);
+    HashMap<String, ArrayList<TimeSlot>> groupedHours = Utils.getHoursGroupedByProject(assignments);
     String result = "{";
     for (String i : groupedHours.keySet()){
         result += "\"" + i + "\":" + JSONEncoder.encodeTimeSlots(groupedHours.get(i)) + ",";

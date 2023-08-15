@@ -309,10 +309,12 @@ function exportHoursWorked(){
         const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
         let boxes = "<p class='hours-worked-header-pdf'>Hours worked per project</p>";
         for (let project of projects) { boxes += processHoursWorkedProjectPDF(project, month, year); }
+        boxes += processHoursWorkedProjectPDF({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year);
         boxesTarget.innerHTML = boxes;
         
         let lists = "<p class='hours-worked-header-pdf'>Hours worked per assignment</p>";
         for (let project of projects){ lists += processHoursWorkedPerAssignment(project, month, year); }
+        lists += processHoursWorkedPerAssignment({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year);
         assignmentTarget.innerHTML = lists;
         
         html2canvas(document.getElementById("hours-worked-pdf"),{

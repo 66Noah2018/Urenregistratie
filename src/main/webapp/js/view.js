@@ -226,17 +226,24 @@ function showHoursWorkedView(){
 }
 
 function processHoursWorkedForHoursWorkedView(month, year, unwrittenOnly = false){
-   let target = document.getElementById("hours-worked-project-box");
-   if (projects !== null && projects.length > 0){
+    let target = document.getElementById("hours-worked-project-box");
+    if (projects !== null && projects.length > 0){
         let boxes = "";
+        const showNoProjectHours = document.getElementById("no-project-switch").checked;
         for (let project of projects){
             if (unwrittenOnly) { boxes += processUnwrittenHoursProject(project, month, year); }
             else { boxes += processHoursWorkedProject(project, month, year); }
         }
+        if (showNoProjectHours){
+            if (unwrittenOnly) { boxes += processUnwrittenHoursProject({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year); }
+            else { boxes += processHoursWorkedProject({"projectId": null, "projectName":"No project", "projectCode":"-" }, month, year); }
+        }
+        
+        
         target.innerHTML = boxes;
-   } else {
-       target.innerHTML = "<div class='no-project-selected'>No projects yet</div>";
-   }
+    } else {
+        target.innerHTML = "<div class='no-project-selected'>No projects yet</div>";
+    }
 }
 
 function processHoursWorkedProject(project, month, year){
