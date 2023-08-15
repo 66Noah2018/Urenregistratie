@@ -261,10 +261,13 @@ function processHoursWorkedProject(project, month, year){
             </thead>
             <tbody>`;
         let hoursGrouped = groupHours(project.projectId, hours, month, year);
+        let totalHoursEpoch = 0;
         Object.entries(hoursGrouped).forEach(([key, value]) => {
+            totalHoursEpoch += value;
             box += hourOverviewTimeslotToTableRow(key, value);
         });
-        box += "</tbody></table>";
+        box += "</tbody>" + totalRow(totalHoursEpoch);
+        box += "</table>";
     }
     return box += "</div>";
 }
@@ -307,12 +310,26 @@ function processUnwrittenHoursProject(project, month, year){
             </thead>
             <tbody>`;
         let hoursGrouped = groupHours(project.projectId, hours, month, year);
+        let totalHoursEpoch = 0;
         Object.entries(hoursGrouped).forEach(([key, value]) => {
+            totalHoursEpoch += value;
             box += hourOverviewTimeslotToTableRow(key, value);
         });
-        box += "</tbody></table>";
+        box += "</tbody>" + totalRow(totalHoursEpoch);
+        box += "</table>";
     }
     return box += "</div>";
+}
+
+function totalRow (totalHoursEpoch){
+    let hh = Math.floor(totalHoursEpoch / 1000 / 60 / 60);
+    hh = "0" + hh;
+    totalHoursEpoch -= hh * 1000 * 60 * 60;
+    let mm = (totalHoursEpoch / 1000 / 60);
+    mm = "0" + Math.round((mm * 100 / 60));
+    let code = `<tfoot><tr>
+        <td>Total</td><td>${hh.slice(-2)}.${mm.slice(-2)}h</td>`;
+    return code + "</td></tr></tfoot>";
 }
 
 function groupHours(projectId, hours, month, year){
@@ -340,8 +357,8 @@ function hourOverviewTimeslotToTableRow(key, value){
     hh = "0" + hh;
     diffEpoch -= hh * 1000 * 60 * 60;
     let mm = (diffEpoch / 1000 / 60);
-    mm = Math.round((mm * 100 / 60));
+    mm = "0" + Math.round((mm * 100 / 60));
     let code = `<tr>
-        <td>${key}</td><td>${hh.slice(-2)}.${mm}h</td>`;
+        <td>${key}</td><td>${hh.slice(-2)}.${mm.slice(-2)}h</td>`;
     return code + "</td></tr>";
 }
