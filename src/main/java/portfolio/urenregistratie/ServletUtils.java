@@ -161,7 +161,7 @@ public class ServletUtils {
     
     public static Boolean checkFileValidity(String projectString) throws JsonProcessingException{
         try{
-            if (projectString.startsWith("\"")) { projectString = projectString.substring(1, projectString.length()); }
+            if (projectString.startsWith("\"\"")) { projectString = projectString.substring(1, projectString.length()); }
             ObjectMapper mapper = new ObjectMapper();
             JsonNode project = mapper.readTree(projectString);
             // check whether file was created by this program and contains the correct 'keys'
@@ -206,6 +206,7 @@ public class ServletUtils {
         } else { //find file and read
             String pathToFile = null;
             fileName = fileName.substring(1, fileName.length()-1);
+            System.out.println(workingDir.toString());
             if (workingDir != null) {
                 Iterator<File> fileIterator = FileUtils.iterateFiles(new File(workingDir.toString()), extensions, true);
                 while (fileIterator.hasNext() && pathToFile == null) {
@@ -232,7 +233,6 @@ public class ServletUtils {
             }
             if (pathToFile == null) { return new Triplet<>("", "", "Invalid file, no path"); }
             registration = new String(Files.readAllBytes(Paths.get(pathToFile)));
-            registration = registration.substring(1, registration.length() - 1);
             if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, file format incorrect"); }
             currentPath = pathToFile;
         }

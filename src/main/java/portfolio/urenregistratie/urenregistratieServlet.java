@@ -416,9 +416,12 @@ private String saveRegistration() throws IOException {
 
         String body = "{\"registrationName\":\"" + ServletUtils.registrationName + "\",\"workingDir\":\"" + ServletUtils.workingDir.toString().replace("\\", "\\\\") + "\",\"projects\":" + encodedProjects + ",\"assignments\":" + encodedAssignments + "}";
 
-        String fileLocation = ServletUtils.workingDir + "\\" + ServletUtils.registrationName + ".json";
+        String fileLocation = ServletUtils.currentPath;
+        System.out.println(fileLocation);
 
         FileWriter file = new FileWriter(fileLocation);
+        System.out.println("path exists");
+        System.out.println(body);
         file.write(body);
         file.close();
         return "OK";
