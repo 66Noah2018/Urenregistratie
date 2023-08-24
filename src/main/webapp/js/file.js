@@ -344,10 +344,12 @@ function processHoursWorkedPerAssignment(project, month, year){
                 </tr>
             </thead>
             <tbody>`;
+            let totalHoursEpoch = 0;
             Object.entries(assignmentGroupedHours).forEach(([key, value]) => {
                 listContent += hourOverviewTimeslotToTableRow(key, value);
+            totalHoursEpoch += value;
             });
-            listContent += "</tbody></table></div></td>";
+            listContent += "</tbody>" + totalRow(totalHoursEpoch) + "</table></div></td>";
             boxesCount += 1;
             if (boxesCount%3 == 0) {
                 boxes += "</tr></tbody></table><table><tbody><tr>";
@@ -386,10 +388,12 @@ function processHoursWorkedProjectPDF(project, month, year){
             </thead>
             <tbody>`;
         let hoursGrouped = groupHours(project.projectId, hours, month, year);
+        let totalHoursEpoch = 0;
         Object.entries(hoursGrouped).forEach(([key, value]) => {
             box += hourOverviewTimeslotToTableRow(key, value);
+            totalHoursEpoch += value;
         });
-        box += "</tbody></table>";
+        box += "</tbody>" + totalRow(totalHoursEpoch) + "</table>";
     }
     return box += "</div>";
 }
