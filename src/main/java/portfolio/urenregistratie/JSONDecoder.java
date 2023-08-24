@@ -101,7 +101,7 @@ public class JSONDecoder {
         if (timeSlotMatchFound){
             String timeSlotId = timeSlotMatcher.group(1);
             LocalDateTime startTime = LocalDateTime.parse(timeSlotMatcher.group(2), formatter);
-            LocalDateTime endTime = LocalDateTime.parse(timeSlotMatcher.group(3), formatter);
+            LocalDateTime endTime = (timeSlotMatcher.group(3).equals("null")) ? null : LocalDateTime.parse(timeSlotMatcher.group(3), formatter);
             Boolean hoursWritten = Boolean.parseBoolean(timeSlotMatcher.group(4));
             return new TimeSlot(timeSlotId, startTime, endTime, hoursWritten);
         }

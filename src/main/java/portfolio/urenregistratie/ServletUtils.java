@@ -208,27 +208,34 @@ public class ServletUtils {
             fileName = fileName.substring(1, fileName.length()-1);
             System.out.println(workingDir.toString());
             if (workingDir != null) {
-                Iterator<File> fileIterator = FileUtils.iterateFiles(new File(workingDir.toString()), extensions, true);
-                while (fileIterator.hasNext() && pathToFile == null) {
-                    File file = fileIterator.next();
-                    if (file.getName().equals(fileName)) { pathToFile = file.getPath(); }
-                }
+                try{
+                    Iterator<File> fileIterator = FileUtils.iterateFiles(new File(workingDir.toString()), extensions, true);
+                    while (fileIterator.hasNext() && pathToFile == null) {
+                        File file = fileIterator.next();
+                        if (file.getName().equals(fileName)) { pathToFile = file.getPath(); }
+                    }
+                } catch (java.lang.IllegalArgumentException exception) {}
+                
             }
             if (pathToFile == null) {
                 if (defaultWorkingDirectory == null) { loadSettings(); }
                 if (defaultWorkingDirectory != null && !defaultWorkingDirectory.equals("null")) {
-                    Iterator<File> fileIterator = FileUtils.iterateFiles(new File(defaultWorkingDirectory), extensions, true);
-                    while (fileIterator.hasNext() && pathToFile == null) {
-                        File file = fileIterator.next();
-                        if (file.getName().equals(fileName)) { pathToFile = file.getPath(); }
-                    }
+                    try {
+                        Iterator<File> fileIterator = FileUtils.iterateFiles(new File(defaultWorkingDirectory), extensions, true);
+                        while (fileIterator.hasNext() && pathToFile == null) {
+                            File file = fileIterator.next();
+                            if (file.getName().equals(fileName)) { pathToFile = file.getPath(); }
+                        }
+                    } catch (java.lang.IllegalArgumentException exception) {}                    
                 }
                 if (pathToFile == null) {
-                    Iterator<File> fileIterator = FileUtils.iterateFiles(new File(rootPath), extensions, true);
-                    while (fileIterator.hasNext() && pathToFile == null) {
-                        File file = fileIterator.next();
-                        if (file.getName().equals(fileName)) { pathToFile = file.getPath(); }
-                    }
+                    try{
+                        Iterator<File> fileIterator = FileUtils.iterateFiles(new File(rootPath), extensions, true);
+                        while (fileIterator.hasNext() && pathToFile == null) {
+                            File file = fileIterator.next();
+                            if (file.getName().equals(fileName)) { pathToFile = file.getPath(); }
+                        }
+                    } catch (java.lang.IllegalArgumentException exception) {}                    
                 }
             }
             if (pathToFile == null) { return new Triplet<>("", "", "Invalid file, no path"); }

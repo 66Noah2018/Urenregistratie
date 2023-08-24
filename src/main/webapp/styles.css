@@ -337,9 +337,7 @@ input, .input, .textarea, select, .select{
 }
 
 #hours-worked-pdf{
-    border: 2px solid lightgray;
-    width: 100vw;
-    min-width: 100vw;
+    display: none;
 }
 
 .project-assignments-header-pdf {
@@ -356,11 +354,11 @@ input, .input, .textarea, select, .select{
 }
 
 .pdf-assignment-box {
-    width: 200px;
+    width: 260px;
     margin-left: 10px;
     border: 2px lightgray solid;
     border-radius: 5px;
-    float: left;
+    /*float: left;*/
     margin-bottom: 10px;
 }
 
@@ -371,11 +369,6 @@ input, .input, .textarea, select, .select{
     margin-bottom: 5px;
 }
 
-#hours-worked-pdf{
-    display: grid;
-    visibility: collapse;
-}
-
 .hours-worked-header-pdf {
     font-size: xx-large;
     margin-left: 10px;
@@ -384,4 +377,40 @@ input, .input, .textarea, select, .select{
 
 .pdf-project-assignment-box{
     display: flow-root;
+}
+
+.specifiers{
+    display: -webkit-inline-box;
+}
+
+.specifiers-checkbox{
+    margin-left: 10px;
+}
+
+@media print {
+    .ribbon-menu, #sidebar-index, #hours-worked-project-box, .specifiers, .hours-worked-header {
+        display: none;
+    }
+    
+    #hours-worked-pdf{
+        display: block;
+    }
+    
+    #hours-worked-boxes-pdf, #hours-worked-per-project-pdf{
+        display: block;
+        position: relative;
+        break-after: page;
+    }
+    
+    td{
+        vertical-align: top;
+    }
+    
+    #content{
+        overflow-y: visible;
+    }
+    
+    table{
+        break-inside: avoid;
+    }
 }

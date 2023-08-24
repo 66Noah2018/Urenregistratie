@@ -300,16 +300,23 @@ function removeClassesFromDirBtn(){
     dirBtn.classList.remove("success");
 }
 
-function exportHoursWorked(){
+function exportHoursWorked(){  
     let boxesTarget = document.getElementById("hours-worked-boxes-pdf");
     let assignmentTarget = document.getElementById("hours-worked-per-project-pdf");
     if (projects !== null && projects.length > 0){
         const currentDate = new Date();
         const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
         const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
-        let boxes = "<p class='hours-worked-header-pdf'>Hours worked per project</p>";
-        for (let project of projects) { boxes += processHoursWorkedProjectPDF(project, month, year); }
-        boxes += processHoursWorkedProjectPDF({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year);
+        let boxes = "<table><tbody><tr><p class='hours-worked-header-pdf'>Hours worked per project</p></tr><tr>";
+        let boxesCount = 0;
+        for (let project of projects) { 
+            boxes += "<td>" + processHoursWorkedProjectPDF(project, month, year) + "</td>"; 
+            boxesCount += 1;
+            if (boxesCount%3 === 0) {
+                boxes += "</tr></tbody></table><table><tbody><tr>";
+            }
+        }
+        boxes += "<td>" + processHoursWorkedProjectPDF({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year) + "</td></tbody></table>";
         boxesTarget.innerHTML = boxes;
         
         let lists = "<p class='hours-worked-header-pdf'>Hours worked per assignment</p>";
@@ -317,48 +324,19 @@ function exportHoursWorked(){
         lists += processHoursWorkedPerAssignment({"projectId": null, "projectName":"No project", "projectCode":"-"}, month, year);
         assignmentTarget.innerHTML = lists;
         
-        html2canvas(document.getElementById("hours-worked-pdf"),{
-            onrendered:function(canvas){
-                var img=canvas.toDataURL("image/png");
-                var doc = new jsPDF();
-                doc.addImage(img,'JPEG',20,20);
-                doc.save('test.pdf');
-                console.log("saved")
-            }
-        });
-        
-//        let pdf = new jsPDF('p', 'pt', 'letter');
-//        pdf.addHTML(document.getElementById("hours-worked-pdf"), function () {
-//            pdf.output("dataurlnewwindow");
-//            console.log("saved")
-////            pdf.save(month + "-" + year + '_export.pdf');
-//        });
-        
-
-        
-        
-//        let doc = new jsPDF();
-//        var source = window.document.getElementById("hours-worked-pdf");
-//        doc.fromHTML(
-//            source,
-//            15,
-//            15,
-//            {
-//              'width': 180
-//            });
-//
-//        doc.output("dataurlnewwindow");
+        window.print();
     }
 }
 
 function processHoursWorkedPerAssignment(project, month, year){
     let assignments = JSON.parse(servletRequest(SERVLET_URL + "?function=getAssignmentsByProjectId&projectId=" + project.projectId));
-    let listContent = `<div class="pdf-project-assignment-box"><p class='project-assignments-header-pdf'>Project ${project.projectName}</p><p class='project-assignments-subheader-pdf'>${project.projectCode}</p>`;
+    let listContent = `<table><tbody><tr><div class="pdf-project-assignment-box"><p class='project-assignments-header-pdf'>Project ${project.projectName}</p><p class='project-assignments-subheader-pdf'>${project.projectCode}</p></tr><tr>`;
+    let boxesCount = 0;
     for (assignment of assignments) {
         const assignmentHoursWorked = assignment.hoursWorked;
         const assignmentGroupedHours = groupHoursPerAssignment(assignmentHoursWorked, month, year);
         if (Object.keys(assignmentGroupedHours).length > 0){
-            listContent += `<div class="pdf-assignment-box"><p class="pdf-assignment-header">${assignment.assignmentName}</p><table class="table" id="hours-worked-table-pdf">
+            listContent += `<td><div class="pdf-assignment-box"><p class="pdf-assignment-header">${assignment.assignmentName}</p><table class="table" id="hours-worked-table-pdf">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -369,10 +347,14 @@ function processHoursWorkedPerAssignment(project, month, year){
             Object.entries(assignmentGroupedHours).forEach(([key, value]) => {
                 listContent += hourOverviewTimeslotToTableRow(key, value);
             });
-            listContent += "</tbody></table></div>";
+            listContent += "</tbody></table></div></td>";
+            boxesCount += 1;
+            if (boxesCount%3 == 0) {
+                boxes += "</tr></tbody></table><table><tbody><tr>";
+            }
         }
     }
-    return listContent + "</div>";
+    return listContent + "</tr></tbody></table>";
 }
 
 function groupHoursPerAssignment(timeslots, month, year){
@@ -393,7 +375,7 @@ function groupHoursPerAssignment(timeslots, month, year){
 function processHoursWorkedProjectPDF(project, month, year){
     let hours = JSON.parse(servletRequest(SERVLET_URL + "?function=getHoursByProjectId&projectId=" + project.projectId));
     let box = `<div class="hours-box" id="PDF-${project.projectId}"><p class="hours-box-header">${project.projectName}</p><p class="hours-box-subheader">${project.projectCode}</p>`;
-    if (hours === null || hours.length === 0) { box += "<div class='no-hours-for-project'>No hours for this project</div>"; }
+    if (hours === null || hours.length === 0 ) { box += "<p class='no-hours-for-project'>No hours for this project</p>"; }
     else{
         box += `<table class="table" id="hours-worked-table-pdf">
             <thead>
