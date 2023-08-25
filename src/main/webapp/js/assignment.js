@@ -120,6 +120,7 @@ function fillAssignmentDetailsFields(assignmentId){
 function processHoursWorked(hoursWorked){
     let tableBody = document.getElementById("hours-worked-table").children[1];
     let tableRows = "";
+    hoursWorked = hoursWorked.reverse();
     hoursWorked.forEach(timeslot => { tableRows += timeslotToTableRow(timeslot); });
     tableBody.innerHTML = tableRows;
 }
