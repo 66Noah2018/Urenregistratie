@@ -304,15 +304,14 @@ function exportHoursWorked(){
     let boxesTarget = document.getElementById("hours-worked-boxes-pdf");
     let assignmentTarget = document.getElementById("hours-worked-per-project-pdf");
     if (projects !== null && projects.length > 0){
-        const currentDate = new Date();
-        const year = ("0" + currentDate.getFullYear()).slice(-4); // ugly trick to get '2023' instead of 2023
-        const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+        const month = (document.getElementById("hours-worked-date-picker").value).split("-")[0];
+        const year = (document.getElementById("hours-worked-date-picker").value).split("-")[1];
         let boxes = "<table><tbody><tr><p class='hours-worked-header-pdf'>Hours worked per project</p></tr><tr>";
         let boxesCount = 0;
         for (let project of projects) { 
             boxes += "<td>" + processHoursWorkedProjectPDF(project, month, year) + "</td>"; 
             boxesCount += 1;
-            if (boxesCount%3 === 0) {
+            if (boxesCount%2 === 0) {
                 boxes += "</tr></tbody></table><table><tbody><tr>";
             }
         }
@@ -351,8 +350,8 @@ function processHoursWorkedPerAssignment(project, month, year){
             });
             listContent += "</tbody>" + totalRow(totalHoursEpoch) + "</table></div></td>";
             boxesCount += 1;
-            if (boxesCount%3 == 0) {
-                boxes += "</tr></tbody></table><table><tbody><tr>";
+            if (boxesCount%2 == 0) {
+                listContent += "</tr></tbody></table><table><tbody><tr>";
             }
         }
     }
