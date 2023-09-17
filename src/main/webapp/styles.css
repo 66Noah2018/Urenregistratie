@@ -387,18 +387,6 @@ input, .input, .textarea, select, .select{
     margin-left: 10px;
 }
 
-.date-div{
-    width: 50%;
-    float: left;
-}
-
-.ongoing-div{
-    width: 50%;
-    float: right;
-    margin-top: 28px;
-    margin-bottom: 1px;
-}
-
 @media print {
     .ribbon-menu, #sidebar-index, #hours-worked-project-box, .specifiers, .hours-worked-header {
         display: none;

@@ -74,7 +74,6 @@ function saveNewAssignment(){
         projects = result.projects;
         document.getElementById("assignment-view").click();
         showNotification("Saved", "New assignment created", infoBoxProperties.success);
-        saveRegistration();
     }  
 }
 
@@ -187,11 +186,7 @@ function editTimeslot(timeslotId){
         });
         document.getElementById("start-date-picker").value = timeSlot.startTime.split(" ")[0];
         document.getElementById("start-time-picker").value = timeSlot.startTime.split(" ")[1];
-        if (timeSlot.endTime.split(" ")[1] === undefined){
-            document.getElementById("timeslot-ongoing-checkbox").checked = true;
-            document.getElementById("end-time-picker").disabled = true;
-        } else { document.getElementById("end-time-picker").value = timeSlot.endTime.split(" ")[1]; }
-        
+        document.getElementById("end-time-picker").value = timeSlot.endTime.split(" ")[1];
     };
     xhr.send();
 }
@@ -200,28 +195,21 @@ function processUpdatedTimeslot(timeslot){
     let startDate = document.getElementById("start-date-picker").value;
     let startTime = document.getElementById("start-time-picker").value;
     let startTimeNormalized = new Date('August 19, 1975 ' + startTime).toLocaleTimeString('it-IT');
-    let completeEndTime = "null";
-    let ongoing = document.getElementById("timeslot-ongoing-checkbox").checked;
-    if (!ongoing){
-        let endTime = document.getElementById("end-time-picker").value;
-        let endTimeNormalized = new Date('August 19, 1975 ' + endTime).toLocaleTimeString('it-IT');
-        completeEndTime = startDate + " " + endTimeNormalized;
-    }
+    let endTime = document.getElementById("end-time-picker").value;
+    let endTimeNormalized = new Date('August 19, 1975 ' + endTime).toLocaleTimeString('it-IT');
     
     let result = JSON.parse(servletRequestPost(SERVLET_URL + "?function=updateTimeSlot", {
         "assignmentId": selectedAssignmentId,
         "timeSlotId": timeslot.timeSlotId,
         "startTime": startDate + " " + startTimeNormalized,
-        "endTime": completeEndTime,
-        "hoursWritten": timeslot.hoursWritten,
-        "ongoing": ongoing.toString()
+        "endTime": startDate + " " + endTimeNormalized,
+        "hoursWritten": timeslot.hoursWritten
     }));
     assignments = result.assignments;
     projects = result.projects;
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Saved", "Timeslot updated", infoBoxProperties.success);
-    saveRegistration();
 }
 
 function deleteTimeslot(timeslotId){
@@ -253,7 +241,6 @@ function processDeletedTimeslot(timeslotId){
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Deleted", "Timeslot deleted", infoBoxProperties.success);
-    saveRegistration();
 }
 
 function newTimeslot(){
@@ -274,7 +261,6 @@ function newTimeslot(){
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Saved", "New timeslot created", infoBoxProperties.success);   
-    saveRegistration();
 }
 
 function finishStopwatch(timeslotId){
@@ -299,7 +285,6 @@ function finishStopwatch(timeslotId){
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Saved", "Timeslot updated", infoBoxProperties.success);
-    saveRegistration();
 }
 
 function updateHoursWritten(timeslotId){
@@ -319,7 +304,6 @@ function updateHoursWritten(timeslotId){
     assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Saved", "Timeslot updated", infoBoxProperties.success);
-    saveRegistration();
 }
 
 function addTimeslot(){
@@ -372,7 +356,6 @@ function processAddedTimeslot(){
     let assignmentToDisplay = assignments.filter(assignment => assignment.assignmentId === selectedAssignmentId)[0];
     processHoursWorked(assignmentToDisplay.hoursWorked);
     showNotification("Saved", "New timeslot created", infoBoxProperties.success);
-    saveRegistration();
 }
 
 function saveUpdatedAssignment(){
@@ -394,9 +377,8 @@ function saveUpdatedAssignment(){
         }));
         assignments = result.assignments;
         projects = result.projects;
-        filterAssignments(null);
+        processAssignments();
         showNotification("Saved", "Assignment updated", infoBoxProperties.success);
-        saveRegistration();
     }
 }
 
@@ -428,15 +410,12 @@ function processDeletedAssignment(){
     selectedAssignmentId = null;
     showAssignmentView();
     showNotification("Deleted", "Assignment deleted", infoBoxProperties.success);
-    saveRegistration();
 }
 
 function filterAssignments(checkboxClicked){
-    if (checkboxClicked !== null){
-        let targetClicked = document.getElementById(checkboxClicked);
-        if (targetClicked.classList.contains("checked")) { targetClicked.classList.remove("checked"); }
-        else { targetClicked.classList.add("checked"); }
-    }
+    let targetClicked = document.getElementById(checkboxClicked);
+    if (targetClicked.classList.contains("checked")) { targetClicked.classList.remove("checked"); }
+    else { targetClicked.classList.add("checked"); }
     
     const showNotStarted = document.getElementById("not-started-checkbox").classList.contains("checked");
     const showStarted = document.getElementById("started-checkbox").classList.contains("checked");
@@ -461,14 +440,8 @@ function filterAssignments(checkboxClicked){
 function showAllAssignments(){
     document.getElementById("not-started-checkbox").classList.add("checked");
     document.getElementById("started-checkbox").classList.add("checked");
-    document.getElementById("finished-checkbox").classList.remove("checked");
+    document.getElementById("finished-checkbox").classList.add("checked");
     document.getElementById("insufficient-information-checkbox").classList.add("checked");
-    assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", "[NOT_STARTED, STARTED, INSUFFICIENT_INFORMATION]"));
+    assignments = JSON.parse(servletRequestPost(SERVLET_URL + "?function=getAssignmentsByState", "[NOT_STARTED, STARTED, INSUFFICIENT_INFORMATION, FINISHED]"));
     processAssignments();
-}
-
-function updateTimeslotType(){
-    const timeslotTypeOngoing = document.getElementById("timeslot-ongoing-checkbox").checked;
-    if (timeslotTypeOngoing){ document.getElementById("end-time-picker").disabled = true; }
-    else { document.getElementById("end-time-picker").disabled = false; }
 }

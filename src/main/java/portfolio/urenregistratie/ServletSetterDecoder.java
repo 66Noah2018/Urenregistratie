@@ -33,18 +33,15 @@ public class ServletSetterDecoder {
     }
     
     public static Pair<String, TimeSlot> decodeUpdatedTimeSlot (String encodedTimeSlot) throws JsonProcessingException {
-        Pattern timeSlotPattern = Pattern.compile("\"assignmentId\":\"(.*)\",\"timeSlotId\":\"(.*)\",\"startTime\":\"(.*)\",\"endTime\":\"(.*)\",\"hoursWritten\":\"(.*)\",\"ongoing\":\"(.*)\"");
+        Pattern timeSlotPattern = Pattern.compile("\"assignmentId\":\"(.*)\",\"timeSlotId\":\"(.*)\",\"startTime\":\"(.*)\",\"endTime\":\"(.*)\",\"hoursWritten\":\"(.*)\"");
         Matcher timeSlotMatcher = timeSlotPattern.matcher(encodedTimeSlot);
         Boolean timeSlotMatchFound = timeSlotMatcher.find();
         if (timeSlotMatchFound){
             String assignmentId = timeSlotMatcher.group(1);
             String timeSlotId = timeSlotMatcher.group(2);
             LocalDateTime startTime = LocalDateTime.parse(timeSlotMatcher.group(3), formatter);
-            Boolean ongoingTimeslot = Boolean.parseBoolean(timeSlotMatcher.group(6));
-            LocalDateTime endTime = null;
-            if (!ongoingTimeslot){ endTime = LocalDateTime.parse(timeSlotMatcher.group(4), formatter); }
+            LocalDateTime endTime = LocalDateTime.parse(timeSlotMatcher.group(4), formatter);
             Boolean hoursWritten = Boolean.parseBoolean(timeSlotMatcher.group(5));
-            
             TimeSlot newTimeSlot = new TimeSlot(timeSlotId, startTime, endTime, hoursWritten);
             return new Pair<>(assignmentId, newTimeSlot);
         }
