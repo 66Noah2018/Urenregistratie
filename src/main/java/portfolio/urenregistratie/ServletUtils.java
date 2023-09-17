@@ -195,14 +195,12 @@ public class ServletUtils {
         if (fileName.startsWith(rootPath)) { // fully specified path
             try{
                 registration = new String(Files.readAllBytes(Paths.get(fileName)));
+                if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, file format incorrect"); }
+                currentPath = Paths.get(fileName).toString();
+                fileName = Paths.get(fileName).getFileName().toString(); 
             } catch(java.nio.file.NoSuchFileException exception){
                 return new Triplet<>("", "", "Invalid file, path does not exist");
-            }
-
-            if (!checkFileValidity(registration)) { return new Triplet<>("", "", "Invalid file, file format incorrect"); }
-            currentPath = Paths.get(fileName).toString();
-            fileName = Paths.get(fileName).getFileName().toString();
-            
+            } 
         } else { //find file and read
             String pathToFile = null;
             fileName = fileName.substring(1, fileName.length()-1);
