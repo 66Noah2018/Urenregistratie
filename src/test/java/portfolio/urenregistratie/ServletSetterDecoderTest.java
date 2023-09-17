@@ -81,13 +81,29 @@ public class ServletSetterDecoderTest {
      */
     @Test
     public void testDecodeUpdatedTimeSlot() throws Exception {
-        String encodedUpdatedTimeSlot = "{\"assignmentId\":\"" + assignmentId1 + "\",\"timeSlotId\":\"" + timeSlotId1 + "\",\"startTime\":\"14-07-2022 17:00:05\",\"endTime\":\"14-07-2022 19:00:10\",\"hoursWritten\":\"" + hoursWritten1 + "\"}";
+        String encodedUpdatedTimeSlot = "{\"assignmentId\":\"" + assignmentId1 + "\",\"timeSlotId\":\"" + timeSlotId1 + "\",\"startTime\":\"14-07-2022 17:00:05\",\"endTime\":\"14-07-2022 19:00:10\",\"hoursWritten\":\"" + hoursWritten1 + "\",\"ongoing\":\"false\"}";
         Pair<String, TimeSlot> decodedTimeSlotData = ServletSetterDecoder.decodeUpdatedTimeSlot(encodedUpdatedTimeSlot);
         final SoftAssertions soft = new SoftAssertions();
         soft.assertThat(decodedTimeSlotData.getValue0()).isEqualTo(assignmentId1);
         soft.assertThat(decodedTimeSlotData.getValue1().getTimeSlotId()).isEqualTo(timeSlotId1);
         soft.assertThat(decodedTimeSlotData.getValue1().getStartTime()).isEqualTo(time1);
         soft.assertThat(decodedTimeSlotData.getValue1().getEndTime()).isEqualTo(time2);
+        soft.assertThat(decodedTimeSlotData.getValue1().getHoursWritten()).isEqualTo(hoursWritten1);
+        soft.assertAll();
+    }
+    
+    /**
+     * Test of decodeUpdatedTimeSlot method, of class ServletSetterDecoder.
+     */
+    @Test
+    public void testDecodeUpdatedTimeSlot2() throws Exception {
+        String encodedUpdatedTimeSlot = "{\"assignmentId\":\"" + assignmentId1 + "\",\"timeSlotId\":\"" + timeSlotId1 + "\",\"startTime\":\"14-07-2022 17:00:05\",\"endTime\":\"null\",\"hoursWritten\":\"" + hoursWritten1 + "\",\"ongoing\":\"true\"}";
+        Pair<String, TimeSlot> decodedTimeSlotData = ServletSetterDecoder.decodeUpdatedTimeSlot(encodedUpdatedTimeSlot);
+        final SoftAssertions soft = new SoftAssertions();
+        soft.assertThat(decodedTimeSlotData.getValue0()).isEqualTo(assignmentId1);
+        soft.assertThat(decodedTimeSlotData.getValue1().getTimeSlotId()).isEqualTo(timeSlotId1);
+        soft.assertThat(decodedTimeSlotData.getValue1().getStartTime()).isEqualTo(time1);
+        soft.assertThat(decodedTimeSlotData.getValue1().getEndTime()).isNull();
         soft.assertThat(decodedTimeSlotData.getValue1().getHoursWritten()).isEqualTo(hoursWritten1);
         soft.assertAll();
     }

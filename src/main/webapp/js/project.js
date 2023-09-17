@@ -57,6 +57,7 @@ function saveNewProject(){
         projects = result.projects;
         document.getElementById("project-view").click();
         showNotification("Saved", "New project created", infoBoxProperties.success);
+        saveRegistration();
     }
 }
 
@@ -128,6 +129,7 @@ function saveUpdatedProject(){
         processProjects();
         showProjectAssignments();
         showNotification("Saved", "Project updated", infoBoxProperties.success);
+        saveRegistration();
     }
 }
 
@@ -159,6 +161,7 @@ function processDeletedProject(){
     selectedProjectId = null;
     document.getElementById("project-view").click();
     showNotification("Deleted", "Project deleted", infoBoxProperties.success);
+    saveRegistration();
 }
 
 function validateProjectForm(){

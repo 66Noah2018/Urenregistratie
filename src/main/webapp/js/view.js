@@ -43,7 +43,7 @@ function loadData(){
         }
         document.getElementById("assignment-view").click();
     } else {
-        showNotification("Please open or create a project", "No project", infoBoxProperties.warningKeepOpen);
+        showNotification("No project", "Please open or create a project", infoBoxProperties.warningKeepOpen);
     }
 }
 
@@ -339,7 +339,16 @@ function groupHours(projectId, hours, month, year){
         const date = timeslot.startTime.split(" ")[0];
         if ((date.split("-")[1] === month) && (date.split("-")[2] === year)){
             const startDate = new Date('August 19, 1975 ' + timeslot.startTime.split(" ")[1]);
-            const endDate = new Date('August 19, 1975 ' + timeslot.endTime.split(" ")[1]);
+            let endDate = null;
+            if (timeslot.endTime.split(" ")[1] !== null && timeslot.endTime.split(" ")[1] !== undefined ){
+                endDate = new Date('August 19, 1975 ' + timeslot.endTime.split(" ")[1]);
+            } else {
+                const dateNow = new Date();
+                const hours = "0" + dateNow.getHours();
+                const minutes = "0" + dateNow.getMinutes();
+                const seconds = "0" + dateNow.getSeconds();
+                endDate = new Date('August 19, 1975 ' + hours.slice(-2) + ":" + minutes.slice(-2) + ":" + seconds.slice(-2));
+            }
             const diffEpoch = endDate - startDate;
             if (groupedHours.hasOwnProperty(date)) { groupedHours[date] = groupedHours[date] + diffEpoch; }
             else { groupedHours[date] = diffEpoch; }
